@@ -4,7 +4,7 @@ var abxList = [
   { name: 'Oxacillin', admin: 'IV,PO', coverage: ['Streptococcus', 'MSSA'] }, 
   { name: 'Ampicillin', admin: 'IV', coverage: ['Streptococcus', 'E. Coli', 'P. Mirabilis', 'N. Meningitis'] }, 
   { name: 'Amoxicillin', admin: 'IV,PO', coverage: ['Streptococcus', 'E. Coli', 'P. Mirabilis', 'N. Meningitis'] }, 
-  { name: 'Cefazolin', admin: 'IV', coverage: ['MSSA', 'Streptococcus', 'E. Coli', 'P. Mirabilis', 'Klebsiella'] }, 
+  { name: 'Cefazolin (Ancef)', admin: 'IV', coverage: ['MSSA', 'Streptococcus', 'E. Coli', 'P. Mirabilis', 'Klebsiella'] }, 
   { name: 'Cephalexin', admin: 'PO', coverage: ['MSSA', 'Streptococcus', 'E. Coli', 'P. Mirabilis', 'Klebsiella'] }, 
   { name: 'Ceftriaxone', admin: 'IV', coverage: ['MSSA', 'Streptococcus', 'E. Coli', 'P. Mirabilis', 'Klebsiella', 'ESCAPPM', 'N. Gonorrhoeae', 'N. Meningitis'] }, 
   { name: 'Ceftazidime', admin: 'IV', coverage: ['Streptococcus', 'E. Coli', 'P. Mirabilis', 'Klebsiella', 'Pseudomonas'] }, 

@@ -12,6 +12,7 @@
   <script src="/res/js/utilities.js"></script>
   <script src="/data/abxList.js"></script>
   <script src="/data/bugList.js"></script>
+  <script src="/data/conditionList.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="icon" type="image/png" href="/favicon.ico" />
@@ -400,13 +401,23 @@
 
       if (panes == 'one') {
         if (pane == 'abx') {
-          mixedBox.list = abxList;
+          mixedBox.list = abxList.filter(function(abx) {
+            return abx.admin.split(',').some(function(route) {
+              return !!abxRoutes[route];
+            });
+          });;
         } else if (pane == 'bug') {
           var bugSearchList = [];
           addToBugList(bugList, bugSearchList, [], true);
-          mixedBox.list = bugSearchList;
+          mixedBox.list = bugSearchList.concat(conditionList);
         }
       }
+
+      abxBox.list = abxList.filter(function(abx) {
+        return abx.admin.split(',').some(function(route) {
+          return !!abxRoutes[route];
+        });
+      });
 
       $('.mobileTab').removeClass('btn-secondary').addClass('btn-light').unbind('click').click(function() {
         pane = getProp(this, 'type');
@@ -443,16 +454,19 @@
       bugBox.container.addEventListener("awesomplete-selectcomplete", function(data) {
         $('#bugSearch').val('');
         var value = data.text.value;
-        value.stack.slice(0, -1).map(function(parent) {
-          openBugGroups[parent] = true;
+        var bugList = value.includes != null ? value.includes : [value.name];
+        bugList.map(function(bugName) {
+          bugPaths[bugName].slice(0, -1).map(function(parent) {
+            openBugGroups[parent] = true;
+          });
+          targetBugs[bugName] = true;
         });
-        targetBugs[value.name] = true;
         refresh();
       });
 
       var bugSearchList = [];
       addToBugList(bugList, bugSearchList, [], true);
-      bugBox.list = bugSearchList;
+      bugBox.list = bugSearchList.concat(conditionList);;
 
       abxBox = new Awesomplete($('#abxSearch')[0], {
         list: [], minChars: 0, autoFirst: true, maxItems: 8,
@@ -472,8 +486,6 @@
         selectedAbx = value.name;
         refresh();
       });
-      abxBox.list = abxList;
-
 
       contraBox = new Awesomplete($('#contraSearch')[0], {
         list: [], minChars: 0, autoFirst: true, maxItems: 8,
@@ -505,10 +517,17 @@
           pinnedAbx[value.name] = true;
           selectedAbx = null;
         } else if (pane == 'bug') {
-
+          var bugList = value.includes != null ? value.includes : [value.name];
+          bugList.map(function(bugName) {
+            bugPaths[bugName].slice(0, -1).map(function(parent) {
+              openBugGroups[parent] = true;
+            });
+            targetBugs[bugName] = true;
+          });
         }
         refresh();
       });
+      $('#mixedSearch').parent().css('font-size','16px')
 
       $('[data-toggle="tooltip"]').tooltip();
 
