@@ -222,6 +222,7 @@
 
       $('#resetBugs').unbind('click').click(function() {
         targetBugs = {};
+        openBugGroups = {};
         refresh();
       });
 
@@ -328,8 +329,8 @@
           });
           targetBugNames[targetBugName] = true;
           var weight = targetBugs[targetBugName];
-          maxSpecificCoverage += weight;
           var currentLevel = currentCoverage[bugItem.name] == null ? 0 : currentCoverage[bugItem.name];
+          maxSpecificCoverage += weight * (1 - currentLevel);
           var addedBenefit = data.specificCoverage[bugItem.name] == null ? 0 : Math.max(0, data.specificCoverage[bugItem.name] - currentLevel);
           if (addedBenefit > 0) addedWeightedBenefit += weight * addedBenefit;
         });

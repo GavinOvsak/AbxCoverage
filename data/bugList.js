@@ -1,29 +1,60 @@
 var bugList = {
   'Gram Positive Cocci': {
-    'Staph Aureus': {
-      'MRSA': true,
-      'MSSA': true
+    'Staphylococcus': {
+      'Staph Aureus': {
+        'MRSA': true,
+        'MSSA': true
+      },
+      'Staphylococcus Lugdunensis': true,
+      'Staphylococcus Epidermidis': true
     },
-    'Streptococcus': true,
-    'Enterococcus': true
+    'Streptococcus': {
+      'Streptococcus Agalactiae': true,
+      'Streptococcus Viridans': true,
+      'Streptococcus Pneumoniae': true
+    },
+    'Enterococcus': {
+      'Enterococcus Faecalis': true,
+      'Enterococcus Faecium': true
+    }
+  },
+  'Gram Positive Rods': {
+    'Clostridium': {
+      'Clostridium Perfringens': true,
+      'Clostridium (not perfringens)': true
+    }
   },
   'Gram Negative Bacilli': {
     'E. Coli': true,
+    'Salmonella': true,
     'Klebsiella': {
       'Klebsiella Aerogenes': true,
       'Klebsiella Oxytoca': true,
       'Klebsiella Pneumoniae': true
     },
-    'Pseudomonas': true,
+    'Pseudomonas Aeruginosa': {
+      'Pseudomonas Aeruginosa CF mucoid': true,
+      'Pseudomonas Aeruginosa CF non-mucoid': true
+    },
     'Acinetobacter Baumannii': true,
-    'Stenotrophomonas maltophilia': true,
+    'Stenotrophomonas Maltophilia': true,
+    'Bacteroides': {
+      'Bacteroides Fragilis': true,
+      'Bacteroides (not Fragilis)': true
+    },
     'ESCAPPM': {
       'Enterobacter Cloacae': true,
-      'Serratia': true,
-      'Citrobacter Freundii': true,
+      'Serratia Marcescens': true,
+      'Citrobacter': {
+        'Citrobacter Freundii': true,
+        'Citrobacter Koseri': true
+      },
       'Hafnia': true,
       'Aeromonas': true,
-      'P. Mirabilis': true,
+      'Proteus': { 
+        'Proteus Mirabilis': true,
+        'Proteus Vulgaris': true
+      }, 
       'Providencia': true
     }
   },
@@ -31,6 +62,23 @@ var bugList = {
     'N. Gonorrhoeae': true,
     'N. Meningitis': true
   },
-  'Anaerobes': true,
-  'Atypicals': true
+  'Gram Negative Rods': {
+    'Achromobacter Xylosoxidans': true,
+    'Burkholderia Cepacia': true,
+    'Morganella': true,
+    'Campylobacter': true
+  },
+  'Atypicals': {
+    'Chlamydiaceae': true,
+    'Legionella': true,
+    'Mycoplasma': true
+  },
+  'Fungi': {
+    'Candida': {
+      'Candida Albicans': true,
+      'Candida Glabrata': true,
+      'Candida Parapsilosis': true,
+      'Candida Tropicalis': true
+    }
+  }
 };
