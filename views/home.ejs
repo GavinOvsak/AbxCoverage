@@ -28,6 +28,7 @@
           <a href="/" style="color: white; text-decoration: none;">Antibiotic Coverage Guide</a>
         </span>
       </h3>
+      <a href="mailto:ovsak.gavin@gmail.com"><div class="btn btn-light" style="float: right; margin-right: 5px;">Share Feedback</div></a>
       <span id="loadingTitle" style="margin-left: 10px; position: relative; top: -3px; display: none;"> Loading.. </span>
     </span>
   </div>
@@ -205,9 +206,9 @@
 
         $('#bugList').append($(''+
 `<div class="bugRow${item.type == 'normal' ? ' bugNonGroup' : ' bugGroup'}" data-key="${item.name}" style="margin-left: ${(item.stack.length-1) * 10}px;${background}">
-  <div data-percent="${item.percent == null ? 0 : item.percent}" style="float: right;cursor: pointer;width: 16px;height: 16px;margin-top: 5px;margin-right: 4px;">
-    ${(item.percent != null && item.percent != 1) ? `<svg height="15" width="15" viewBox="0 0 20 20" class="bugTarget"><circle r="5" cx="10" cy="10" fill="transparent" stroke="#0c7bff" stroke-width="10" stroke-dasharray="calc(${Math.round(item.percent * 100)} * 31.4 / 100) 31.4"></circle></svg>` :
-    `<input type="checkbox" class="bugTarget" style="cursor: pointer;" ${item.percent != null ? 'checked' : ''}>`}
+  <div class="bugTarget" data-percent="${item.percent == null ? 0 : item.percent}" style="float: right;cursor: pointer;padding: 5px;margin-right: 0px;">
+    ${(item.percent != null && item.percent != 1) ? `<svg height="15" width="15" viewBox="0 0 20 20"><circle r="5" cx="10" cy="10" fill="transparent" stroke="#0c7bff" stroke-width="10" stroke-dasharray="calc(${Math.round(item.percent * 100)} * 31.4 / 100) 31.4"></circle></svg>` :
+    `<input type="checkbox" style="height: 16px; width: 16px; cursor: pointer;" ${item.percent != null ? 'checked' : ''}>`}
   </div>
   ${item.type == 'normal' ? '' : `<i class="fas fa-caret-${item.type == 'open group' ? 'down': 'right'}" style="margin-right: 5px;" aria-hidden="true"></i>`}
   <span>${item.name}</span>
