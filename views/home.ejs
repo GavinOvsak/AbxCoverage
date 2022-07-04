@@ -25,7 +25,7 @@
     <span id="titleAndButtons" style="padding-left: 10px;display: inline-block;width: 100%;padding-top: 7px;vertical-align: top;background-color: #0c7bff;color: white;padding-bottom: 5px;">
       <h3 style="display: inline-block;line-height: 35px;position: relative;top: -4px;vertical-align: top;margin-top: 3px;margin-bottom: 0px;margin-right: 10px;" aria-haspopup="true" aria-expanded="true">
         <span id="mainTitle" style="vertical-align: text-top;">
-          <a href="/" style="color: white; text-decoration: none;">Antibiotic Coverage Guide</a>
+          <a href="/" style="color: white; text-decoration: none;">Antibiotic Coverage</a>
         </span>
       </h3>
       <a href="mailto:ovsak.gavin@gmail.com"><div class="btn btn-light" style="float: right; margin-right: 5px;">Share Feedback</div></a>
@@ -479,6 +479,10 @@
       var showBug = function(value) {
         var includes = value.includes || {};
         if (value.includes == null) includes[value.name] = 1;
+        else {
+          openBugGroups = {};
+          targetBugs = {};
+        }
         keys(includes).map(function(bugName) {
           bugPaths[bugName].slice(1).map(function(parent) {
             openBugGroups[parent] = true;
