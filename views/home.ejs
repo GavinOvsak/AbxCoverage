@@ -100,7 +100,7 @@
           <input id="contraSearch" type="text" class="form-control" placeholder="Search">
         </div>
       </div>
-      <div id="contraList" style="overflow-y: scroll;height: 200px;padding-left: 5px;padding-top: 5px;">
+      <div id="contraList" style="overflow-y: scroll;height: 119px;padding-left: 5px;padding-top: 5px;">
         <div class="abxRow">Pregnant</div>
       </div>
     </div>
@@ -113,7 +113,7 @@
 
     var openBugGroups = {};
     var targetBugs = {};
-    var abxRoutes = { 'IV': true, 'PO': true };
+    var abxRoutes = { 'IV': true, 'PO': false };
 
     var abxResults = [];
     var selectedContraList = [];
@@ -140,65 +140,61 @@
 
     var bugJumps = {};
     var bugPaths = {};
+    var abxJumps = {};
 
     var addToBugList = function(list, outlist, stack, shown) {
       for (var key in list) {
         bugJumps[key] = list[key];
         if (!shown) delete targetBugs[key];
-        var newStack = clone(stack).concat([key]);
+        var newStack = [key].concat(clone(stack));
         bugPaths[key] = newStack;
-        var isSelected = newStack.some(function(name) {
-          return targetBugs[name] != null;
+        var selectedLevel = newStack.find(function(bugLevel) {
+          return targetBugs[bugLevel] != null;
         });
         if (typeof list[key] == 'object') {
           var isOpen = openBugGroups[key] == null ? false : !!openBugGroups[key];
-          outlist.push({name: key, type: (isOpen ? 'open' : 'closed') + ' group', stack: newStack, selected: isSelected, shown: shown });
+          outlist.push({name: key, type: (isOpen ? 'open' : 'closed') + ' group', stack: newStack, percent: targetBugs[selectedLevel], shown: shown });
           addToBugList(list[key], outlist, newStack, shown && isOpen);
         } else {
-          outlist.push({name: key, type: 'normal', stack: newStack, selected: isSelected, shown: shown });
+          outlist.push({name: key, type: 'normal', stack: newStack, percent: targetBugs[selectedLevel], shown: shown });
         }
       }
     };
 
     var refresh = function() {
-      // Fill out bug list and show. Default to expand all for now.
-
       var bugItemList = [];
       addToBugList(bugList, bugItemList, [], true);
 
       var anySelected = !isEmpty(targetBugs);
 
-      var getCoverage = function(bugItem, chosenAbxList) {
-        chosenAbxList = (chosenAbxList || []).filter(function(n) {
-          return n != null;
-        });
-        if (chosenAbxList.length != 0 && chosenAbxList.some(function(abxName) {
-          var abxObj = abxName == null ? null : abxList.find(function(abx) {
-            return abx.name == abxName;
-          });
-
-          return abxObj.coverage.some(function(coverName) {
-            return bugItem.stack.indexOf(coverName) >= 0;
-          });
-        })) return 100;
-
-        if (!empty(bugJumps[bugItem.name])) { // Has subtypes
+      var getCoveragePercent = function(bugItem, chosenAbxList) {
+        if (!empty(bugJumps[bugItem.name])) { // Average over subtypes
           return _.mean(keys(bugJumps[bugItem.name]).map(function(subBug) {
-            return getCoverage({
+            return getCoveragePercent({
               name: subBug,
               stack: clone(bugItem.stack).concat(subBug)
             }, chosenAbxList);
           }));
+        } else {
+          var maxCoverage = 0;
+          (chosenAbxList || []).filter(function(n) {
+            return n != null;
+          }).some(function(abxName) {
+            var abxObj = abxJumps[abxName];
+            var abxCoverageLevel = bugPaths[bugItem.name].find(function(bugLevel) {
+              return abxObj.coverage[bugLevel] >= 0;
+            });
+            if (abxCoverageLevel != null) maxCoverage = Math.max(abxObj.coverage[abxCoverageLevel], maxCoverage);
+          });
+          return maxCoverage * 100;
         }
-
-        return 0;
       };
 
       $('#bugList').empty();
       bugItemList.map(function(item) {
         if (!item.shown) return;
-        var coveredByChosen = getCoverage(item, [selectedAbx])
-        var coveredByAll = getCoverage(item, keys(pinnedAbx).concat([selectedAbx]))
+        var coveredByChosen = getCoveragePercent(item, [selectedAbx])
+        var coveredByAll = Math.max(coveredByChosen, getCoveragePercent(item, keys(pinnedAbx)));
         // Show fractional coverage when group contains things that are covered
 
         var bgColor = item.type == 'normal' ? 'lightgrey' : '#e8e8e8';
@@ -209,7 +205,10 @@
 
         $('#bugList').append($(''+
 `<div class="bugRow${item.type == 'normal' ? ' bugNonGroup' : ' bugGroup'}" data-key="${item.name}" style="margin-left: ${(item.stack.length-1) * 10}px;${background}">
-  <input type="checkbox" ${item.selected ? 'checked' : ''} style="float: right;cursor: pointer;width: 16px;height: 16px;margin-top: 3px;margin-right: 4px;" class="bugTarget">
+  <div data-percent="${item.percent == null ? 0 : item.percent}" style="float: right;cursor: pointer;width: 16px;height: 16px;margin-top: 5px;margin-right: 4px;">
+    ${(item.percent != null && item.percent != 1) ? `<svg height="15" width="15" viewBox="0 0 20 20" class="bugTarget"><circle r="5" cx="10" cy="10" fill="transparent" stroke="#0c7bff" stroke-width="10" stroke-dasharray="calc(${Math.round(item.percent * 100)} * 31.4 / 100) 31.4"></circle></svg>` :
+    `<input type="checkbox" class="bugTarget" style="cursor: pointer;" ${item.percent != null ? 'checked' : ''}>`}
+  </div>
   ${item.type == 'normal' ? '' : `<i class="fas fa-caret-${item.type == 'open group' ? 'down': 'right'}" style="margin-right: 5px;" aria-hidden="true"></i>`}
   <span>${item.name}</span>
 </div>`));
@@ -226,48 +225,45 @@
         refresh();
       });
 
-      $('.bugTarget').unbind('click').on('click', function(e) {
-        e.stopPropagation();
-      });
-
-      var toggleBug = function(bug, wasYes) {
-        if (wasYes) {
-          // Maybe a parent bug is the reason this is checked.
-          bugPaths[bug].map(function(name) {
+      var toggleBug = function(bug, level) {
+        var wasTargetted = false;
+        bugPaths[bug].map(function(name) {
+          if (targetBugs[name] != null) {
+            wasTargetted = true;
             delete targetBugs[name];
-          });
-        } else targetBugs[bug] = true;
+          }
+        });
+        if (!wasTargetted) targetBugs[bug] = level;
         refresh();
       }
       $('.bugNonGroup').unbind('click').on('click', function(e) {
         var key = getProp(this, 'key');
-        toggleBug(key, $(this).find('.bugTarget').is(':checked'));
+        toggleBug(key, 1);
       });
 
-      $('.bugTarget').unbind('change').on('change', function(e) {
+      $('.bugTarget').unbind('click').on('click', function(e) {
         var key = getProp(this, 'key');
-        var isChecked = $(this).is(':checked');
-        toggleBug(key, !isChecked);
+        e.stopPropagation();
+        toggleBug(key, 1);
       });
 
-      var selectedBugs = bugItemList.filter(function(item) {
-        return item.type == 'normal' && !!item.selected;
+      var targetBugList = bugItemList.filter(function(item) {
+        return item.type == 'normal' && item.percent != null;
       });
-
-      // Once you have pinned an antibiotic, only show other things which add to the general coverage
-
-      var currentCoverage = selectedBugs.filter(function(bugItem) {
-        return keys(pinnedAbx).some(function(abxName) {
-          var abxObj = abxName == null ? null : abxList.find(function(abx) {
-            return abx.name == abxName;
+      var currentCoverage = {};
+      targetBugList.map(function(bugItem) {
+        var maxCoverage = 0;
+        keys(pinnedAbx).some(function(abxName) {
+          var abxObj = abxJumps[abxName];
+          var abxCoverageLevel = bugPaths[bugItem.name].find(function(bugLevel) {
+            return abxObj.coverage[bugLevel] >= 0;
           });
-          return abxObj.coverage.some(function(coverName) {
-            return bugItem.stack.indexOf(coverName) >= 0;
-          });
+          if (abxCoverageLevel != null) maxCoverage = Math.max(abxObj.coverage[abxCoverageLevel], maxCoverage);
         });
+        currentCoverage[bugItem.name] = maxCoverage;
       });
-
-      var abxMatches = abxList.map(function(abx) {
+      
+      abxResults = abxList.map(function(abx) {
         if (selectedContraList.some(function(contraName) {
           return (abx.contra || []).indexOf(contraName) >= 0;
         })) return { coverage: [] }; // Avoid contra
@@ -276,28 +272,34 @@
           return !abxRoutes[route];
         })) return { coverage: [] }; // No acceptable route
 
-        var generalCoverage = bugItemList.filter(function(bugItem) {
-          return abx.coverage.some(function(coverName) {
-            return bugItem.stack.indexOf(coverName) >= 0;
+        var generalCoverage = {};
+        bugItemList.filter(function(item) {
+          return item.type == 'normal';
+        }).map(function(bugItem) {
+          var abxCoverageLevel = bugItem.stack.find(function(bugLevel) {
+            return abx.coverage[bugLevel] >= 0;
           });
+          generalCoverage[bugItem.name] = abxCoverageLevel != null ? abx.coverage[abxCoverageLevel] : 0;
         });
 
-        var coveredBugs = selectedBugs.filter(function(bugItem) {
-          return abx.coverage.some(function(coverName) {
-            return bugItem.stack.indexOf(coverName) >= 0;
+        var specificCoverage = {};
+        targetBugList.map(function(bugItem) {
+          var abxCoverageLevel = bugPaths[bugItem.name].find(function(bugLevel) {
+            return abx.coverage[bugLevel] >= 0;
           });
+          specificCoverage[bugItem.name] = abxCoverageLevel != null ? abx.coverage[abxCoverageLevel] : 0;
         });
 
-        return { abx: abx, generalCoverage: generalCoverage, coverage: coveredBugs }
+        return { abx: abx, generalCoverage: generalCoverage, specificCoverage: specificCoverage }
       }).filter(function(data) {
-        return data.abx != null && (data.coverage.some(function(coverName) {
-          return currentCoverage.indexOf(coverName) == -1;
+        return data.abx != null && (keys(data.specificCoverage).some(function(coverName) {
+          return currentCoverage[coverName] == null || data.specificCoverage[coverName] > currentCoverage[coverName];
         }) || !!pinnedAbx[data.abx.name]);
       });
 
       var anyRemoved = false;
       keys(pinnedAbx).concat([selectedAbx]).map(function(abxName) {
-        if (abxName != null && abxMatches.every(function(data) {
+        if (abxName != null && abxResults.every(function(data) {
           return data.abx.name != abxName;
         })) {
           if (selectedAbx == abxName && !abxBox.opened) {
@@ -313,15 +315,43 @@
       if (anyRemoved) return refresh();
 
       $('#abxList').empty();
-      _.orderBy(abxMatches, [function(data) {
+      abxResults = _.orderBy(abxResults, [function(data) {
         return !!pinnedAbx[data.abx.name] ? -1 : 0;
       }, function(data) {
-        return -data.coverage.filter(function(name) {
-          return currentCoverage.indexOf(name) == -1;
-        }).length;
-      }, function(data) {
-        return data.generalCoverage.length;
-      }]).map(function(data) {
+        // Sort by the weighted added benefit to the targetBugs
+        var addedWeightedBenefit = 0;
+        var maxSpecificCoverage = 0;
+        var targetBugNames = {};
+        targetBugList.map(function(bugItem) {
+          var targetBugName = bugItem.stack.find(function(bugName) {
+            return targetBugs[bugName] != null;
+          });
+          targetBugNames[targetBugName] = true;
+          var weight = targetBugs[targetBugName];
+          maxSpecificCoverage += weight;
+          var currentLevel = currentCoverage[bugItem.name] == null ? 0 : currentCoverage[bugItem.name];
+          var addedBenefit = data.specificCoverage[bugItem.name] == null ? 0 : Math.max(0, data.specificCoverage[bugItem.name] - currentLevel);
+          if (addedBenefit > 0) addedWeightedBenefit += weight * addedBenefit;
+        });
+
+        var nonTargetMax = 0;
+        var nonTargetOverlap = 0;
+        for (var bugName in data.generalCoverage) {
+          if (targetBugNames[bugName] == null) {
+            nonTargetOverlap += data.generalCoverage[bugName];
+            nonTargetMax += 1;
+          }
+        }
+
+        // if (data.abx.name == 'Ertapenem') debugger;
+        return -1 * (addedWeightedBenefit/maxSpecificCoverage) + (nonTargetOverlap / nonTargetMax) / 2;
+        // return -data.coverage.filter(function(name) {
+        //   return currentCoverage.indexOf(name) == -1;
+        // }).length;
+      }, function(data) { // Discourage broad spectrum drugs if no added benefit
+        return _.sum(_.values(data.generalCoverage));
+      }]);
+      abxResults.map(function(data) {
         // background-color: #0c7bff; color: white;
         $('#abxList').append($('<div data-name="'+data.abx.name+'" class="abxRow" style="'+(selectedAbx == data.abx.name ? 'background-color: #75a3ff;' : !!pinnedAbx[data.abx.name] ? 'background-color: #65d165' : '')+'">'+
           data.abx.name+
@@ -384,13 +414,13 @@
         $('#bugCol').css('width', 'calc(100% - 335px)').css('height', '100%')
         $('#abxCol').css('width', '335px').css('height', '100%')
         $('#bugList').css('height', 'calc(100% - 44px)');
-        $('#abxList').css('height', 'calc(100% - 296px)');
+        $('#abxList').css('height', 'calc(100% - 215px)');
       } else if (panes == 'one') { // One Pane
         $('#bugCol, #abxCol').css('width', '100%').css('height', 'calc(100% - 49px)')
         $('#bugCol').toggle(pane == 'bug');
         $('#abxCol').toggle(pane == 'abx');
         $('#bugList').css('height', '100%');
-        $('#abxList').css('height', 'calc(100% - 248px)');
+        $('#abxList').css('height', 'calc(100% - 167px)');
       }
 
       $('#mixedAddons').toggle(pane == 'abx');
@@ -444,6 +474,18 @@
 
     $(function() {
 
+      var showBug = function(value) {
+        var includes = value.includes || {};
+        if (value.includes == null) includes[value.name] = 1;
+        keys(includes).map(function(bugName) {
+          bugPaths[bugName].slice(1).map(function(parent) {
+            openBugGroups[parent] = true;
+          });
+          targetBugs[bugName] = includes[bugName];
+        });
+        refresh();
+      };
+
       // Combination of bugs and conditions
       bugBox = new Awesomplete($('#bugSearch')[0], {
         list: [], minChars: 0, autoFirst: true, maxItems: 8,
@@ -454,14 +496,7 @@
       bugBox.container.addEventListener("awesomplete-selectcomplete", function(data) {
         $('#bugSearch').val('');
         var value = data.text.value;
-        var bugList = value.includes != null ? value.includes : [value.name];
-        bugList.map(function(bugName) {
-          bugPaths[bugName].slice(0, -1).map(function(parent) {
-            openBugGroups[parent] = true;
-          });
-          targetBugs[bugName] = true;
-        });
-        refresh();
+        showBug(value);
       });
 
       var bugSearchList = [];
@@ -485,6 +520,10 @@
         var value = data.text.value;
         selectedAbx = value.name;
         refresh();
+      });
+
+      abxList.map(function(abxObj) {
+        abxJumps[abxObj.name] = abxObj;
       });
 
       contraBox = new Awesomplete($('#contraSearch')[0], {
@@ -517,19 +556,35 @@
           pinnedAbx[value.name] = true;
           selectedAbx = null;
         } else if (pane == 'bug') {
-          var bugList = value.includes != null ? value.includes : [value.name];
-          bugList.map(function(bugName) {
-            bugPaths[bugName].slice(0, -1).map(function(parent) {
-              openBugGroups[parent] = true;
-            });
-            targetBugs[bugName] = true;
-          });
+          showBug(value);
         }
         refresh();
       });
       $('#mixedSearch').parent().css('font-size','16px')
 
       $('[data-toggle="tooltip"]').tooltip();
+
+      $(document).keydown(function(e){
+        if (e.which == 40) { // Down
+          if (selectedAbx != null) {
+            var newIndex = abxResults.findIndex(function(data) {
+              return data.abx.name == selectedAbx;
+            }) + 1;
+            if (abxResults[newIndex] != null) selectedAbx = abxResults[newIndex].abx.name;
+            refresh();
+          }
+          return false;
+        } else if (e.which == 38) { // Up
+          if (selectedAbx != null) {
+            var newIndex = abxResults.findIndex(function(data) {
+              return data.abx.name == selectedAbx;
+            }) - 1;
+            if (abxResults[newIndex] != null) selectedAbx = abxResults[newIndex].abx.name;
+            refresh();
+          }
+          return false;
+        }
+      }); 
 
       // $('#surgerySearch, #blockSearch').parent().css('width', 'calc(100% - 10px)');
       // $('#surgerySearch, #blockSearch').parent().find('ul').css('margin-left', '5px');
