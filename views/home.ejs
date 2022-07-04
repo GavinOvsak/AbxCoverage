@@ -1,0 +1,523 @@
+<html>
+<head>
+  <title>Abx Coverage</title>
+  <script src="/res/js/jquery-2.2.4.js"></script>
+  <script src="/res/js/jquery-ui.js"></script>
+  <script src="/res/js/popper.min.js"></script>
+  <script src="/res/js/bootstrap.min.js"></script>
+  <script src="/res/js/lodash.min.js"></script>
+  <script src="/res/js/awesomplete.js"></script>
+  <script async src="/res/js/lodash.min.js"></script>
+  <script src="/res/js/fontawesome.js"></script>
+  <script src="/res/js/utilities.js"></script>
+  <script src="/data/abxList.js"></script>
+  <script src="/data/bugList.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="icon" type="image/png" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="favicon.ico">
+  <link rel="stylesheet" href="/res/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="/res/css/awesomplete.css">
+</head>
+<body style="user-select: none;">
+  <div id="topBar" style="width: 100%; display: inline-block;">
+    <span id="titleAndButtons" style="padding-left: 10px;display: inline-block;width: 100%;padding-top: 7px;vertical-align: top;background-color: #0c7bff;color: white;padding-bottom: 5px;">
+      <h3 style="display: inline-block;line-height: 35px;position: relative;top: -4px;vertical-align: top;margin-top: 3px;margin-bottom: 0px;margin-right: 10px;" aria-haspopup="true" aria-expanded="true">
+        <span id="mainTitle" style="vertical-align: text-top;">
+          <a href="/" style="color: white; text-decoration: none;">Antibiotic Coverage Guide</a>
+        </span>
+      </h3>
+      <span id="loadingTitle" style="margin-left: 10px; position: relative; top: -3px; display: none;"> Loading.. </span>
+    </span>
+  </div>
+  <div id="mainBar" class="bg loading" style="float: left;width: 100%;height: calc(100% - 50px);background-color: white;">
+    <div id="mobileTop" style="width: 100%; background-color: lightgrey; text-align: center; font-size: 21px; display: inline-block;">
+      <div class="btn-sm btn btn-light mobileTab" data-type="bug" style="margin-top: 9px;margin-bottom: 5px;float: left;margin-left: 5px;margin-right: 5px;"><i class="fas fa-bug" style="margin-right: 8px;" aria-hidden="true"></i>Bugs</div><div style="display: inline-block;width: calc(100% - 165px);margin-top: 6px;margin-bottom: 5px;">
+        <div class="input-group">
+          <input id="mixedSearch" type="text" class="form-control" placeholder="Search" aria-label="Recipient's username" aria-describedby="basic-addon2">
+          <div id="mixedAddons" class="input-group-append">
+            <button class="btn btn-primary routeToggle" data-type="IV" type="button" style="padding-left: 8px; padding-right: 8px;">IV</button>
+            <button class="btn btn-primary routeToggle" data-type="PO" type="button" style="padding-left: 8px; padding-right: 8px;">PO</button>
+          </div>
+        </div>
+      </div>
+      <div class="btn-sm btn btn-light mobileTab" data-type="abx" style="margin-top: 9px;margin-bottom: 5px;float: left;margin-left: 5px;margin-right: 5px;float: right;"><i class="fas fa-capsules" style="margin-right: 8px;" aria-hidden="true"></i>Abx</div>
+    </div>
+    <div id="bugCol" style="width: 100%;display: inline-block;vertical-align: top;border-right: black solid 1px;padding-bottom: 10px;height: 50%;"> 
+      <div id="bugTop" style="width: 100%; background-color: lightgrey; padding: 5px 10px; cursor: pointer; display: inline-block;">
+        <i class="fas fa-bug" style="margin-right: 10px;width: 16px; display: inline-block" aria-hidden="true"></i>
+        <span style="display: inline-block; margin-right: 5px;">Bug Targets</span>
+        <div style="display: inline-block;width: calc(100% - 200px);max-width: 330px;">
+          <input id="bugSearch" class="form-control" placeholder="Search Bugs / Conditions" >
+        </div>
+        <div id="resetBugs" class="btn btn-light" style="vertical-align: top;">Reset</div>
+      </div>
+      <style>
+        .bugRow {
+          padding: 6px;
+          border-radius: 5px;
+          width: 220px;
+          margin-bottom: 5px;
+          margin-right: 5px;
+          cursor: pointer;
+        }
+        .abxRow {
+          width: calc(100% - 5px);
+          display: inline-block;
+          margin-bottom: 5px;
+          background-color: #e8e8e8;
+          border-radius: 5px;
+          padding: 5px;
+          text-align: center;
+          cursor: pointer;
+        }
+      </style>
+      <div id="bugList" style="overflow-y: scroll;height: calc(100% - 44px);display: flex;flex-direction: column;flex-wrap: wrap;padding-top: 5px;padding-left: 5px;align-content: flex-start;"></div>
+    </div><div id="abxCol" style="width: 34%; display: none; vertical-align: top;"> 
+      <div id="abxTop" style="width: 100%;background-color: lightgrey;padding: 5px 0px;cursor: pointer;display: inline-block;">
+        <i class="fas fa-capsules" style="margin-right: 10px;width: 14px;display: inline-block;margin-left: 10px;" aria-hidden="true"></i>
+        <span style="display: inline-block;margin-right: 8px;">Abx</span>
+        <div style="display: inline-block;width: calc(100% - 86px);">
+          <div class="input-group">
+            <input id="abxSearch" type="text" class="form-control" placeholder="Search">
+            <div class="input-group-append">
+              <button class="btn btn-primary routeToggle" data-type="IV" type="button" style="padding-left: 8px; padding-right: 8px;">IV</button>
+              <button class="btn btn-primary routeToggle" data-type="PO" type="button" style="padding-left: 8px; padding-right: 8px;">PO</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="abxList" style="overflow-y: scroll;height: calc(100% - 296px);padding-left: 5px;padding-top: 5px;">
+        <div class="abxRow">Ampicillin / Amoxicillin</div>
+        <div class="abxRow">Ampicillin / Amoxicillin</div>
+        <div class="abxRow">Ampicillin / Amoxicillin</div>
+      </div>
+      <div id="contraTop" style="width: 100%;background-color: lightgrey;padding: 5px 0px;cursor: pointer;display: inline-block;padding-left: 7px;">
+        <i class="fas fa-biohazard" style="margin-right: 10px;width: 14px;display: inline-block;" aria-hidden="true"></i>
+        <span style="display: inline-block;margin-right: 3px;">Contraindications</span>
+        <div style="display: inline-block;width: calc(100% - 170px);">
+          <input id="contraSearch" type="text" class="form-control" placeholder="Search">
+        </div>
+      </div>
+      <div id="contraList" style="overflow-y: scroll;height: 200px;padding-left: 5px;padding-top: 5px;">
+        <div class="abxRow">Pregnant</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    var pane = 'bug';
+    var panes = 'three';
+
+    var openBugGroups = {};
+    var targetBugs = {};
+    var abxRoutes = { 'IV': true, 'PO': true };
+
+    var abxResults = [];
+    var selectedContraList = [];
+
+    var selectedCondition = null;
+    var selectedAbx = null;
+    var pinnedAbx = {};
+
+    var bugBox = null;
+    var abxBox = null;
+    var contraBox = null;
+    var mixedBox = null;
+
+    var getProp = function(that, prop) {
+      return $(that).closest('[data-'+prop+']').attr('data-'+prop);
+    };
+
+    var setMaxHeight = function(element) {
+      var headerBox = $(element+' .modal-header').length != 0 ? $(element+' .modal-header')[0].getBoundingClientRect() : {height: 0, top: 0};
+      var footerBox = $(element+' .modal-footer').length != 0 ? $(element+' .modal-footer')[0].getBoundingClientRect() : {height: 20};
+      var maxHeight = $(element+'').height() - (Math.max(headerBox.top, 10) + headerBox.height + footerBox.height + 20);
+      $(element+' .modal-body').css('max-height', maxHeight);
+    };
+
+    var bugJumps = {};
+    var bugPaths = {};
+
+    var addToBugList = function(list, outlist, stack, shown) {
+      for (var key in list) {
+        bugJumps[key] = list[key];
+        if (!shown) delete targetBugs[key];
+        var newStack = clone(stack).concat([key]);
+        bugPaths[key] = newStack;
+        var isSelected = newStack.some(function(name) {
+          return targetBugs[name] != null;
+        });
+        if (typeof list[key] == 'object') {
+          var isOpen = openBugGroups[key] == null ? false : !!openBugGroups[key];
+          outlist.push({name: key, type: (isOpen ? 'open' : 'closed') + ' group', stack: newStack, selected: isSelected, shown: shown });
+          addToBugList(list[key], outlist, newStack, shown && isOpen);
+        } else {
+          outlist.push({name: key, type: 'normal', stack: newStack, selected: isSelected, shown: shown });
+        }
+      }
+    };
+
+    var refresh = function() {
+      // Fill out bug list and show. Default to expand all for now.
+
+      var bugItemList = [];
+      addToBugList(bugList, bugItemList, [], true);
+
+      var anySelected = !isEmpty(targetBugs);
+
+      var getCoverage = function(bugItem, chosenAbxList) {
+        chosenAbxList = (chosenAbxList || []).filter(function(n) {
+          return n != null;
+        });
+        if (chosenAbxList.length != 0 && chosenAbxList.some(function(abxName) {
+          var abxObj = abxName == null ? null : abxList.find(function(abx) {
+            return abx.name == abxName;
+          });
+
+          return abxObj.coverage.some(function(coverName) {
+            return bugItem.stack.indexOf(coverName) >= 0;
+          });
+        })) return 100;
+
+        if (!empty(bugJumps[bugItem.name])) { // Has subtypes
+          return _.mean(keys(bugJumps[bugItem.name]).map(function(subBug) {
+            return getCoverage({
+              name: subBug,
+              stack: clone(bugItem.stack).concat(subBug)
+            }, chosenAbxList);
+          }));
+        }
+
+        return 0;
+      };
+
+      $('#bugList').empty();
+      bugItemList.map(function(item) {
+        if (!item.shown) return;
+        var coveredByChosen = getCoverage(item, [selectedAbx])
+        var coveredByAll = getCoverage(item, keys(pinnedAbx).concat([selectedAbx]))
+        // Show fractional coverage when group contains things that are covered
+
+        var bgColor = item.type == 'normal' ? 'lightgrey' : '#e8e8e8';
+        var background = coveredByAll == 0 ? 'background-color: '+bgColor+';' :
+          'background: linear-gradient(to right, '+
+            '#75a3ff '+coveredByChosen+'%, #65d165 '+coveredByChosen+'%,'+
+            '#65d165 '+coveredByAll+'%, '+bgColor+' '+coveredByAll+'%);'
+
+        $('#bugList').append($(''+
+`<div class="bugRow${item.type == 'normal' ? ' bugNonGroup' : ' bugGroup'}" data-key="${item.name}" style="margin-left: ${(item.stack.length-1) * 10}px;${background}">
+  <input type="checkbox" ${item.selected ? 'checked' : ''} style="float: right;cursor: pointer;width: 16px;height: 16px;margin-top: 3px;margin-right: 4px;" class="bugTarget">
+  ${item.type == 'normal' ? '' : `<i class="fas fa-caret-${item.type == 'open group' ? 'down': 'right'}" style="margin-right: 5px;" aria-hidden="true"></i>`}
+  <span>${item.name}</span>
+</div>`));
+      });
+
+      $('.bugGroup').unbind('click').click(function(e) {
+        var key = getProp(this, 'key');
+        openBugGroups[key] = !(openBugGroups[key] == null ? false : openBugGroups[key]);
+        refresh();
+      });
+
+      $('#resetBugs').unbind('click').click(function() {
+        targetBugs = {};
+        refresh();
+      });
+
+      $('.bugTarget').unbind('click').on('click', function(e) {
+        e.stopPropagation();
+      });
+
+      var toggleBug = function(bug, wasYes) {
+        if (wasYes) {
+          // Maybe a parent bug is the reason this is checked.
+          bugPaths[bug].map(function(name) {
+            delete targetBugs[name];
+          });
+        } else targetBugs[bug] = true;
+        refresh();
+      }
+      $('.bugNonGroup').unbind('click').on('click', function(e) {
+        var key = getProp(this, 'key');
+        toggleBug(key, $(this).find('.bugTarget').is(':checked'));
+      });
+
+      $('.bugTarget').unbind('change').on('change', function(e) {
+        var key = getProp(this, 'key');
+        var isChecked = $(this).is(':checked');
+        toggleBug(key, !isChecked);
+      });
+
+      var selectedBugs = bugItemList.filter(function(item) {
+        return item.type == 'normal' && !!item.selected;
+      });
+
+      // Once you have pinned an antibiotic, only show other things which add to the general coverage
+
+      var currentCoverage = selectedBugs.filter(function(bugItem) {
+        return keys(pinnedAbx).some(function(abxName) {
+          var abxObj = abxName == null ? null : abxList.find(function(abx) {
+            return abx.name == abxName;
+          });
+          return abxObj.coverage.some(function(coverName) {
+            return bugItem.stack.indexOf(coverName) >= 0;
+          });
+        });
+      });
+
+      var abxMatches = abxList.map(function(abx) {
+        if (selectedContraList.some(function(contraName) {
+          return (abx.contra || []).indexOf(contraName) >= 0;
+        })) return { coverage: [] }; // Avoid contra
+        var adminTypes = abx.admin.split(',');
+        if (adminTypes.every(function(route) {
+          return !abxRoutes[route];
+        })) return { coverage: [] }; // No acceptable route
+
+        var generalCoverage = bugItemList.filter(function(bugItem) {
+          return abx.coverage.some(function(coverName) {
+            return bugItem.stack.indexOf(coverName) >= 0;
+          });
+        });
+
+        var coveredBugs = selectedBugs.filter(function(bugItem) {
+          return abx.coverage.some(function(coverName) {
+            return bugItem.stack.indexOf(coverName) >= 0;
+          });
+        });
+
+        return { abx: abx, generalCoverage: generalCoverage, coverage: coveredBugs }
+      }).filter(function(data) {
+        return data.abx != null && (data.coverage.some(function(coverName) {
+          return currentCoverage.indexOf(coverName) == -1;
+        }) || !!pinnedAbx[data.abx.name]);
+      });
+
+      var anyRemoved = false;
+      keys(pinnedAbx).concat([selectedAbx]).map(function(abxName) {
+        if (abxName != null && abxMatches.every(function(data) {
+          return data.abx.name != abxName;
+        })) {
+          if (selectedAbx == abxName && !abxBox.opened) {
+            selectedAbx = null;
+            anyRemoved = true;
+          }
+          if (pinnedAbx[abxName] != null) {
+            delete pinnedAbx[abxName];
+            anyRemoved = true;
+          }
+        }
+      });
+      if (anyRemoved) return refresh();
+
+      $('#abxList').empty();
+      _.orderBy(abxMatches, [function(data) {
+        return !!pinnedAbx[data.abx.name] ? -1 : 0;
+      }, function(data) {
+        return -data.coverage.filter(function(name) {
+          return currentCoverage.indexOf(name) == -1;
+        }).length;
+      }, function(data) {
+        return data.generalCoverage.length;
+      }]).map(function(data) {
+        // background-color: #0c7bff; color: white;
+        $('#abxList').append($('<div data-name="'+data.abx.name+'" class="abxRow" style="'+(selectedAbx == data.abx.name ? 'background-color: #75a3ff;' : !!pinnedAbx[data.abx.name] ? 'background-color: #65d165' : '')+'">'+
+          data.abx.name+
+          '<i class="'+(!!pinnedAbx[data.abx.name] ? 'fas' : 'far')+' fa-bookmark saveAbx" aria-hidden="true" style="float: right;padding: 5px; color: black"></i>'+
+        '</div>'));
+      });
+
+      // Ideally would show a circle of how much coverage each has
+
+      $('.abxRow').unbind('click').click(function() {
+        var name = getProp(this, 'name');
+        if (selectedAbx == name) selectedAbx = null;
+        else selectedAbx = name;
+        refresh();
+      });
+
+      $('.saveAbx').unbind('click').click(function(e) {
+        var name = getProp(this, 'name');
+        if (pinnedAbx[name] != null) delete pinnedAbx[name];
+        else pinnedAbx[name] = true;
+        selectedAbx = null;
+        e.stopPropagation();
+        refresh();
+      });
+
+      var contraList = {};
+      abxList.map(function(abx) {
+        (abx.contra || []).map(function(contra) {
+          contraList[contra] = true;
+        });
+      });
+
+      contraBox.list = keys(contraList).filter(function(contraName) {
+        return selectedContraList.indexOf(contraName) == -1;
+      });
+
+      $('#contraList').empty();
+      selectedContraList.map(function(contra) {
+        $('#contraList').append($('<div data-type="'+contra+'" class="abxRow removeContra">'+contra+'<i class="fa-solid fa-xmark" style="float: right; padding: 5px;"></i></div>'));
+      });
+
+      $('.removeContra').unbind('click').click(function() {
+        var type = getProp(this, 'type');
+        selectedContraList = selectedContraList.filter(function(n) {
+          return n != type;
+        });
+        refresh();
+      });
+    };
+
+    var updateLayout = function() {
+      var width = $(document).innerWidth();
+      var oldPanes = panes;
+      panes = width > 615 ? 'two' : 'one';
+      if (panes != oldPanes) refresh();
+
+      $('#mobileTop').toggle(panes == 'one');
+      $('#bugCol, #abxCol, #bugTop, #abxTop').css('display', panes != 'one' ? 'inline-block' : 'none');
+      if (panes == 'two') { // Two Pane
+        $('#bugCol').css('width', 'calc(100% - 335px)').css('height', '100%')
+        $('#abxCol').css('width', '335px').css('height', '100%')
+        $('#bugList').css('height', 'calc(100% - 44px)');
+        $('#abxList').css('height', 'calc(100% - 296px)');
+      } else if (panes == 'one') { // One Pane
+        $('#bugCol, #abxCol').css('width', '100%').css('height', 'calc(100% - 49px)')
+        $('#bugCol').toggle(pane == 'bug');
+        $('#abxCol').toggle(pane == 'abx');
+        $('#bugList').css('height', '100%');
+        $('#abxList').css('height', 'calc(100% - 248px)');
+      }
+
+      $('#mixedAddons').toggle(pane == 'abx');
+      $('#bugSearch, #contraSearch').parent().css('width', '100%');
+      $('#abxSearch').parent().css('width', 'calc(100% - 72px)');
+      $('#mixedSearch').parent().css('width', pane == 'abx' ? 'calc(100% - 72px)' : '100%');
+      $('#mixedSearch').attr('placeholder', pane == 'abx' ? 'Search Antibiotics' : 'Search Bugs / Conditions');
+
+      if (panes == 'one') {
+        if (pane == 'abx') {
+          mixedBox.list = abxList;
+        } else if (pane == 'bug') {
+          var bugSearchList = [];
+          addToBugList(bugList, bugSearchList, [], true);
+          mixedBox.list = bugSearchList;
+        }
+      }
+
+      $('.mobileTab').removeClass('btn-secondary').addClass('btn-light').unbind('click').click(function() {
+        pane = getProp(this, 'type');
+        refresh();
+        updateLayout();
+      });
+      $('.mobileTab[data-type="'+pane+'"]').addClass('btn-secondary').removeClass('btn-light')
+      // $('#bodyMain').css('height', panes == 'one' ? '100%' : 'calc(100% - 55px)');
+
+      $('.routeToggle').removeClass('btn-primary').addClass('btn-light').unbind('click').click(function() {
+        var type = getProp(this, 'type');
+        abxRoutes[type] = !abxRoutes[type];
+        refresh();
+        updateLayout();
+      });
+      for (var route in abxRoutes) {
+        if (!!abxRoutes[route]) $('.routeToggle[data-type="'+route+'"]').addClass('btn-primary').removeClass('btn-light')
+      }
+    };
+
+    $(window).on('resize', function() {
+      updateLayout();
+    });
+
+    $(function() {
+
+      // Combination of bugs and conditions
+      bugBox = new Awesomplete($('#bugSearch')[0], {
+        list: [], minChars: 0, autoFirst: true, maxItems: 8,
+        data: function(item) {
+          return { label: item.name, value: item };
+        }
+      });
+      bugBox.container.addEventListener("awesomplete-selectcomplete", function(data) {
+        $('#bugSearch').val('');
+        var value = data.text.value;
+        value.stack.slice(0, -1).map(function(parent) {
+          openBugGroups[parent] = true;
+        });
+        targetBugs[value.name] = true;
+        refresh();
+      });
+
+      var bugSearchList = [];
+      addToBugList(bugList, bugSearchList, [], true);
+      bugBox.list = bugSearchList;
+
+      abxBox = new Awesomplete($('#abxSearch')[0], {
+        list: [], minChars: 0, autoFirst: true, maxItems: 8,
+        data: function(item) {
+          return { label: item.name, value: item };
+        }
+      });
+      abxBox.container.addEventListener("awesomplete-selectcomplete", function(data) {
+        $('#abxSearch').val('');
+        var value = data.text.value;
+        pinnedAbx[value.name] = true;
+        selectedAbx = null;
+        refresh();
+      });
+      abxBox.container.addEventListener("awesomplete-highlight", function(data) {
+        var value = data.text.value;
+        selectedAbx = value.name;
+        refresh();
+      });
+      abxBox.list = abxList;
+
+
+      contraBox = new Awesomplete($('#contraSearch')[0], {
+        list: [], minChars: 0, autoFirst: true, maxItems: 8,
+        data: function(item) {
+          return { label: item.label, value: item };
+        }
+      });
+      $('#contraSearch').click(function() {
+        contraBox.evaluate();
+      });
+
+      contraBox.container.addEventListener("awesomplete-selectcomplete", function(data) {
+        $('#contraSearch').val('');
+        var value = data.text.value;
+        if (selectedContraList.indexOf(value) == -1) selectedContraList.push(value);
+        refresh();
+      });
+
+      mixedBox = new Awesomplete($('#mixedSearch')[0], {
+        list: [], minChars: 0, autoFirst: true, maxItems: 8,
+        data: function(item) {
+          return { label: item.name, value: item };
+        }
+      });
+      mixedBox.container.addEventListener("awesomplete-selectcomplete", function(data) {
+        $('#mixedSearch').val('');
+        var value = data.text.value;
+        if (pane == 'abx') {
+          pinnedAbx[value.name] = true;
+          selectedAbx = null;
+        } else if (pane == 'bug') {
+
+        }
+        refresh();
+      });
+
+      $('[data-toggle="tooltip"]').tooltip();
+
+      // $('#surgerySearch, #blockSearch').parent().css('width', 'calc(100% - 10px)');
+      // $('#surgerySearch, #blockSearch').parent().find('ul').css('margin-left', '5px');
+
+      updateLayout();
+      refresh();
+    });
+  </script>
+</body>
+</html>
