@@ -9,7 +9,7 @@ var bugList = {
       'Staphylococcus Epidermidis': true
     },
     'Streptococcus': {
-      'Streptococcus Agalactiae': true,
+      'Streptococcus Agalactiae (Group B)': true,
       'Streptococcus Viridans': true,
       'Streptococcus Pneumoniae': true
     },

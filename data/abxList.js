@@ -4,7 +4,7 @@ var abxList = [
     "admin": "IV,PO",
     "coverage": {
       "Streptococcus": 1,
-      "Streptococcus Agalactiae": 1,
+      "Streptococcus Agalactiae (Group B)": 1,
       "Streptococcus Viridans": 0.82,
       "Streptococcus Pneumoniae": 0.72,
       "Enterococcus": 0.91,
@@ -15,10 +15,11 @@ var abxList = [
       "Bacteroides (not Fragilis)": 0,
       "Gram Negative Rods": 0.55,
       "Clostridium Perfringens": 1,
-      "Clostridium (not Perfringens)": 0.56,
+      "Clostridium (not Perfringens)": 0.91,
       "Gram Positive Rods": 0.93,
       "Gram Positive Cocci": 1
     },
+    cost: '$',
     "contra": [
       "Penicillin Allergy",
       "Beta Lactam Allergy"
@@ -51,7 +52,10 @@ var abxList = [
   {
     "name": "Ampicillin",
     "admin": "IV",
+    cost: '$$',
     "coverage": {
+      'Enterococcus Faecalis': 1,
+      'Enterococcus Faecium': 0.2,
       "Streptococcus": 1,
       "E. Coli": 0.53,
       "Proteus Mirabilis": 0.75,
@@ -96,6 +100,7 @@ var abxList = [
   {
     "name": "Cefazolin (Ancef)",
     "admin": "IV",
+    cost: '$',
     "coverage": {
       "Citrobacter Freundii": 0,
       "MSSA": 1,
@@ -137,6 +142,7 @@ var abxList = [
   {
     "name": "Ceftriaxone",
     "admin": "IV",
+    cost: '$',
     "coverage": {
       "Serratia Marcescens": 0.95,
       "Klebsiella Pneumoniae": 0.9,
@@ -146,6 +152,7 @@ var abxList = [
       "Streptococcus": 0.93,
       "E. Coli": 0.9,
       "Proteus Mirabilis": 0.94,
+      'Proteus Vulgaris': 0.69,
       "Klebsiella Aerogenes": 0.73,
       "ESCAPPM": 1,
       "N. Gonorrhoeae": 1,
@@ -215,6 +222,7 @@ var abxList = [
   {
     "name": "Cefuroxime",
     "admin": "IV",
+    cost: '$',
     "coverage": {
       "Serratia Marcescens": 0,
       "Klebsiella Pneumoniae": 0.26,
@@ -228,6 +236,7 @@ var abxList = [
   {
     "name": "Cefepime",
     "admin": "IV",
+    cost: '$',
     "coverage": {
       "Serratia Marcescens": 1,
       "Pseudomonas Aeruginosa": 0.92,
@@ -272,16 +281,18 @@ var abxList = [
   {
     "name": "Ampicillin + Sulbactam (Unasyn)",
     "admin": "IV,PO",
+    cost: '$',
     "coverage": {
       "Klebsiella Oxytoca": 0.71,
       "MSSA": 1,
       "Streptococcus": 1,
       "E. Coli": 0.61,
       "Proteus Mirabilis": 0.76,
+      'Proteus Vulgaris': 0.83,
       "Klebsiella": 1,
       "Gram Positive Rods": 1,
       "Bacteroides": 1,
-      "Acinetobacter Baumannii": 0.9,
+      "Acinetobacter Baumannii": 0.72,
       "Citrobacter Freundii": 0,
       "Citrobacter Koseri": 0.96,
       "Enterobacter Cloacae": 0,
@@ -301,6 +312,7 @@ var abxList = [
   {
     "name": "Piperacillin + Tazobactam (Zosyn)",
     "admin": "IV",
+    cost: '$$',
     "coverage": {
       "Pseudomonas Aeruginosa": 0.93,
       "Klebsiella Pneumoniae": 0.92,
@@ -329,6 +341,7 @@ var abxList = [
   {
     "name": "Ertapenem",
     "admin": "IV",
+    cost: '$$',
     "coverage": {
       "Stenotrophomonas Maltophilia": 0,
       "Serratia Marcescens": 1,
@@ -359,6 +372,7 @@ var abxList = [
   {
     "name": "Imipenem",
     "admin": "IV",
+    cost: '$$$',
     "coverage": {
       "Serratia Marcescens": 1,
       "Pseudomonas Aeruginosa": 0.88,
@@ -385,6 +399,7 @@ var abxList = [
   {
     "name": "Meropenem",
     "admin": "IV",
+    cost: '$$',
     "coverage": {
       "Pseudomonas Aeruginosa": 0.91,
       "MSSA": 1,
@@ -421,6 +436,7 @@ var abxList = [
   {
     "name": "Ciprofloxacin",
     "admin": "IV,PO",
+    cost: '$',
     "coverage": {
       "Staph Aureus": 0.72,
       "Serratia Marcescens": 0.96,
@@ -435,7 +451,7 @@ var abxList = [
       "Gram Negative Cocci": 1,
       "Acinetobacter Baumannii": 0.7,
       "Enterococcus": 0.72,
-      "Achromobacter Xylosoxidans": 0.17,
+      "Achromobacter Xylosoxidans": 0.06,
       "Citrobacter Freundii": 0.95,
       "Citrobacter Koseri": 1,
       "E. coli": 0.77,
@@ -451,6 +467,7 @@ var abxList = [
   {
     "name": "Levofloxacin",
     "admin": "IV,PO",
+    cost: '$',
     "coverage": {
       "Stenotrophomonas Maltophilia": 0.86,
       "Serratia Marcescens": 0.98,
@@ -466,7 +483,7 @@ var abxList = [
       "Gram Negative Cocci": 1,
       "Atypicals": 1,
       "Acinetobacter Baumannii": 0.75,
-      "Streptococcus Agalactiae": 0.96,
+      "Streptococcus Agalactiae (Group B)": 0.96,
       "Enterococcus": 0.82,
       "Achromobacter Xylosoxidans": 0.66,
       "Citrobacter Freundii": 0.93,
@@ -482,6 +499,7 @@ var abxList = [
   {
     "name": "Moxifloxacin",
     "admin": "IV,PO",
+    cost: '$',
     "coverage": {
       "MSSA": 0.86,
       "Streptococcus": 1,
@@ -503,6 +521,7 @@ var abxList = [
   {
     "name": "Gentamicin",
     "admin": "IV",
+    cost: '$',
     "coverage": {
       "Serratia Marcescens": 1,
       "Pseudomonas Aeruginosa": 0.91,
@@ -511,13 +530,13 @@ var abxList = [
       "E. Coli": 0.88,
       "Enterobacter Cloacae": 0.97,
       "Gram Negative Bacilli": 1,
-      "Acinetobacter Baumannii": 0.85,
+      "Acinetobacter Baumannii": 0.80,
       "Klebsiella Aerogenes": 1,
       "Enterococcus Faecalis": 0.84,
       "Enterococcus Faecium": 0.94,
-      "Achromobacter Xylosoxidans": 0,
+      "Achromobacter Xylosoxidans": 0.06,
       "Citrobacter Freundii": 0.93,
-      "Citrobacter Koseri": 1,
+      "Citrobacter Koseri": 0.98,
       "E. coli": 0.89,
       "Morganella": 0.78,
       "Proteus Mirabilis": 0.86,
@@ -535,11 +554,12 @@ var abxList = [
   {
     "name": "Tobramycin",
     "admin": "IV",
+    cost: '$',
     "coverage": {
       "Pseudomonas Aeruginosa": 0.98,
       "Gram Negative Bacilli": 1,
       "Acinetobacter Baumannii": 0.85,
-      "Achromobacter Xylosoxidans": 0,
+      "Achromobacter Xylosoxidans": 0.06,
       "Citrobacter Freundii": 0.93,
       "Citrobacter Koseri": 0.99,
       "Enterobacter Cloacae": 0.97,
@@ -561,8 +581,9 @@ var abxList = [
   {
     "name": "Amikacin",
     "admin": "IV",
+    cost: '$',
     "coverage": {
-      "Serratia Marcescens": 1,
+      "Serratia Marcescens": 0.99,
       "Pseudomonas Aeruginosa": 0.97,
       "Klebsiella Pneumoniae": 1,
       "Klebsiella Oxytoca": 0.99,
@@ -588,6 +609,7 @@ var abxList = [
   {
     "name": "Clindamycin",
     "admin": "IV,PO",
+    cost: '$',
     "coverage": {
       "Streptococcus": 0.83,
       "Staph Aureus": 0.74,
@@ -595,7 +617,9 @@ var abxList = [
       "MRSA": 0.55,
       "Gram Positive Rods": 0.75,
       "Bacteroides": 1,
-      "Streptococcus Agalactiae": 0.61,
+      'Bacteroides (not Fragilis)': 0.29,
+      'Bacteroides Fragilis': 0.74,
+      "Streptococcus Agalactiae (Group B)": 0.61,
       "Streptococcus Viridans": 0.8,
       "Streptococcus Pneumoniae": 0.9,
       "MSSA": 0.79,
@@ -603,7 +627,7 @@ var abxList = [
       "Staphylococcus Epidermidis": 0.61,
       "Bacteroides Fragilis": 0.57,
       "Bacteroides (not Fragilis)": 0.31,
-      "Gram Negative Rods": 0.65,
+      "Gram Negative Rods": 0.43,
       "Clostridium Perfringens": 0.23,
       "Clostridium (not Perfringens)": 0.52
     }
@@ -622,10 +646,16 @@ var abxList = [
   {
     "name": "Tetracycline",
     "admin": "IV",
+    cost: '$',
     "coverage": {
       "Streptococcus": 0.8,
       "Staph Aureus": 0.92,
-      "Acinetobacter Baumannii": 0.85
+      'MRSA': 0.87,
+      'MSSA': 0.95,
+      'Staphylococcus Lugdunensis': 0.96,
+      'Staphylococcus Epidermidis': 0.79,
+      "Acinetobacter Baumannii": 0.85,
+      'Enterococcus': 0.3
     },
     "contra": [
       "Pregnancy"
@@ -665,6 +695,7 @@ var abxList = [
   {
     "name": "Vancomycin",
     "admin": "IV",
+    cost: '$',
     "coverage": {
       "Streptococcus": 1,
       "Gram Positive Cocci": 1,
@@ -692,6 +723,7 @@ var abxList = [
   {
     "name": "Linezolid",
     "admin": "IV,PO",
+    cost: '$$$',
     "coverage": {
       "Streptococcus": 1,
       "Gram Positive Cocci": 1,
@@ -708,10 +740,11 @@ var abxList = [
   {
     "name": "Erythromycin",
     "admin": "IV,PO",
+    cost: '$',
     "coverage": {
       "Staph Aureus": 0.58,
       "Streptococcus": 0.6,
-      "Streptococcus Agalactiae": 0.54,
+      "Streptococcus Agalactiae (Group B)": 0.54,
       "Streptococcus Viridans": 0.59,
       "Streptococcus Pneumoniae": 0.65,
       "MRSA": 0.1,
@@ -724,6 +757,7 @@ var abxList = [
   {
     "name": "Nitrofurantoin",
     "admin": "PO",
+    cost: '$',
     "coverage": {
       "Enterococcus": 0.96,
       "Citrobacter Freundii": 0.94,
@@ -742,6 +776,7 @@ var abxList = [
   {
     "name": "Streptomycin",
     "admin": "IV",
+    cost: '$',
     "coverage": {
       "Enterococcus Faecalis": 0.81,
       "Enterococcus Faecium": 0.48
@@ -750,6 +785,7 @@ var abxList = [
   {
     "name": "Amphotericin B",
     "admin": "IV,PO",
+    cost: '$$$$',
     "coverage": {
       "Candida Albicans": 1,
       "Candida Glabrata": 1,
@@ -761,6 +797,7 @@ var abxList = [
   {
     "name": "Caspofungin",
     "admin": "IV",
+    cost: '$$$$',
     "coverage": {
       "Candida Albicans": 1,
       "Candida Glabrata": 0.89,
@@ -772,6 +809,7 @@ var abxList = [
   {
     "name": "Fluconazole",
     "admin": "IV,PO",
+    cost: '$',
     "coverage": {
       "Candida Albicans": 0.99,
       "Candida Glabrata": 0.87,
@@ -782,6 +820,7 @@ var abxList = [
   {
     "name": "Voriconazole",
     "admin": "IV,PO",
+    cost: '$$$$',
     "coverage": {
       "Candida Albicans": 1,
       "Candida Parapsilosis": 1,
@@ -807,6 +846,7 @@ var abxList = [
   {
     "name": "TMP+SMX (Bactrim)",
     "admin": "IV,PO",
+    cost: '$',
     "coverage": {
       "Streptococcus": 0.84,
       "Staph Aureus": 0.99,
@@ -845,7 +885,8 @@ var abxList = [
     "name": "Metronidazole (Flagyl)",
     "admin": "IV,PO",
     "coverage": {
-      "Gram Positive Rods": 0.15,
+      "Gram Positive Rods": 0.67,
+      "Gram Positive Cocci": 0.84,
       "Bacteroides": 1,
       "Bacteroides Fragilis": 1,
       "Bacteroides (not Fragilis)": 0.97,
@@ -860,6 +901,7 @@ var abxList = [
   {
     "name": "Aztreonam",
     "admin": "IV",
+    cost: '$$$',
     "coverage": {
       "Pseudomonas Aeruginosa": 0.86,
       "Klebsiella Pneumoniae": 0.87,
@@ -867,7 +909,7 @@ var abxList = [
       "Klebsiella Aerogenes": 0.73,
       "Achromobacter Xylosoxidans": 0,
       "Citrobacter Freundii": 0.58,
-      "Citrobacter Koseri": 1,
+      "Citrobacter Koseri": 0.96,
       "E. coli": 0.83,
       "Klebsiella Oxytoca": 0.91,
       "Morganella": 0.96,
@@ -933,10 +975,10 @@ var abxList = [
 
 
 // var abgramSource = [
-//   '100\tStreptococcus Agalactiae\tPenicillin G',
-//   '54\tStreptococcus Agalactiae\tErythromycin',
-//   '61\tStreptococcus Agalactiae\tClindamycin',
-//   '96\tStreptococcus Agalactiae\tLevofloxacin',
+//   '100\tStreptococcus Agalactiae (Group B)\tPenicillin G',
+//   '54\tStreptococcus Agalactiae (Group B)\tErythromycin',
+//   '61\tStreptococcus Agalactiae (Group B)\tClindamycin',
+//   '96\tStreptococcus Agalactiae (Group B)\tLevofloxacin',
 //   '251\tStreptococcus Viridans\tNumber Tested',
 //   '82\tStreptococcus Viridans\tPenicillin G',
 //   '100\tStreptococcus Viridans\tCeftriaxone',
