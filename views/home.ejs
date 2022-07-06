@@ -257,6 +257,13 @@
         });
         if (!wasTargetted) targetBugs[bug] = level;
         refresh();
+        var nonPinnedAbx = abxResults.filter(function(n) {
+          return pinnedAbx[n.abx.name] == null && (n.abx.cost == null || n.abx.cost == '$');
+        });
+        if (nonPinnedAbx.length > 0) {
+          selectedAbx = nonPinnedAbx[0].abx.name; 
+          refresh();
+        }
       }
       $('.bugNonGroup').unbind('click').on('click', function(e) {
         var key = getProp(this, 'key');
@@ -530,6 +537,13 @@
           targetBugs[bugName] = includes[bugName];
         });
         refresh();
+        var nonPinnedAbx = abxResults.filter(function(n) {
+          return pinnedAbx[n.abx.name] == null && (n.abx.cost == null || n.abx.cost == '$');
+        });
+        if (nonPinnedAbx.length > 0) {
+          selectedAbx = nonPinnedAbx[0].abx.name; 
+          refresh();
+        }
       };
 
       $('#bugSearch').unbind('focus').on('focus', function() {

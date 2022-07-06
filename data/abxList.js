@@ -175,6 +175,7 @@ var abxList = [
   {
     "name": "Ceftazidime",
     "admin": "IV",
+    cost: '$$',
     "coverage": {
       "Stenotrophomonas Maltophilia": 0.47,
       "Streptococcus": 1,
@@ -561,7 +562,7 @@ var abxList = [
   {
     "name": "Tobramycin",
     "admin": "IV",
-    cost: '$',
+    cost: '$$',
     "coverage": {
       "Pseudomonas Aeruginosa": 0.98,
       "Gram Negative Bacilli": 1,
@@ -850,6 +851,7 @@ var abxList = [
   {
     "name": "Ceftolozane-Tazobactam",
     "admin": "IV",
+    cost: '$$$',
     "coverage": {
       "Pseudomonas Aeruginosa CF mucoid": 0.96,
       "Pseudomonas Aeruginosa CF non-mucoid": 0.92
