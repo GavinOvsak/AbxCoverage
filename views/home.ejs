@@ -417,6 +417,8 @@
         $('#contraList').append($('<div data-type="'+contra+'" class="abxRow removeContra">'+contra+'<i class="fa-solid fa-xmark" style="float: right; padding: 5px;"></i></div>'));
       });
 
+      $('#contraToggle').css('color', selectedContraList.length == 0 ? '': '#007bff')
+
       $('.removeContra').unbind('click').click(function() {
         var type = getProp(this, 'type');
         selectedContraList = selectedContraList.filter(function(n) {
@@ -442,7 +444,7 @@
         $('#bugList, #abxList').css('height', 'calc(100% - 44px)');
       } else if (panes == 'one') { // One Pane
 
-        if (height < 430) { // Only focus on one. Looks like keyboard shrunk the view.
+        if (height < 500) { // Only focus on one. Looks like keyboard shrunk the view.
           $('#bugList, #abxList').css('height', 'calc(100% - 44px)');
           $('#abxCol, #bugCol').css('width', '100%').css('height', '100%');
           if (focusPane == 'bug') $('#abxCol, abxList').hide();
