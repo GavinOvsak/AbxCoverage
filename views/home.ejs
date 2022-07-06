@@ -461,8 +461,6 @@
       }
 
       // $('#mixedAddons').toggle(pane == 'abx');
-      $('#bugSearch, #contraSearch').parent().css('width', '100%');
-      $('#abxSearch').parent().css('width', 'calc(100% - 72px)');
       // $('#mixedSearch').parent().css('width', pane == 'abx' ? 'calc(100% - 72px)' : '100%');
       // $('#mixedSearch').attr('placeholder', pane == 'abx' ? 'Search Antibiotics' : 'Search Bugs / Conditions');
 
@@ -595,6 +593,9 @@
         if (selectedContraList.indexOf(value) == -1) selectedContraList.push(value);
         refresh();
       });
+
+      $('#bugSearch, #contraSearch').parent().css('width', '100%');
+      $('#abxSearch').parent().css('width', 'calc(100% - 72px)');
 
       // mixedBox = new Awesomplete($('#mixedSearch')[0], {
       //   list: [], minChars: 0, autoFirst: true, maxItems: 8,
