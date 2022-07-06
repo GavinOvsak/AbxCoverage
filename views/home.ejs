@@ -373,7 +373,7 @@
       abxResults.map(function(data) {
         // background-color: #0c7bff; color: white;
         $('#abxList').append($('<div data-name="'+data.abx.name+'" class="abxRow" style="'+(selectedAbx == data.abx.name ? 'background-color: #75a3ff;' : !!pinnedAbx[data.abx.name] ? 'background-color: #65d165' : '')+'">'+
-          data.abx.name+
+          data.abx.name+(data.abx.cost != null ? ' ('+data.abx.cost+')' : '')+
           '<i class="'+(!!pinnedAbx[data.abx.name] ? 'fas' : 'far')+' fa-bookmark saveAbx" aria-hidden="true" style="float: right;padding: 5px; color: black"></i>'+
         '</div>'));
       });
