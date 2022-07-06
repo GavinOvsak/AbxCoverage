@@ -33,7 +33,7 @@
     </span>
   </div>
   <div id="mainBar" class="bg loading" style="float: left;width: 100%;height: calc(100% - 50px);background-color: white;">
-    <div id="mobileTop" style="width: 100%; background-color: lightgrey; text-align: center; font-size: 21px; display: none;">
+    <!-- <div id="mobileTop" style="width: 100%; background-color: lightgrey; text-align: center; font-size: 21px; display: none;">
       <div class="btn-sm btn btn-light mobileTab" data-type="bug" style="margin-top: 9px;margin-bottom: 5px;float: left;margin-left: 5px;margin-right: 5px;"><i class="fas fa-bug" style="margin-right: 8px;" aria-hidden="true"></i>Bugs</div><div style="display: inline-block;width: calc(100% - 165px);margin-top: 6px;margin-bottom: 5px;">
         <div class="input-group">
           <input id="mixedSearch" type="text" class="form-control" placeholder="Search" aria-label="Recipient's username" aria-describedby="basic-addon2">
@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="btn-sm btn btn-light mobileTab" data-type="abx" style="margin-top: 9px;margin-bottom: 5px;float: left;margin-left: 5px;margin-right: 5px;float: right;"><i class="fas fa-capsules" style="margin-right: 8px;" aria-hidden="true"></i>Abx</div>
-    </div>
+    </div> -->
     <div id="bugCol" style="width: 100%;display: inline-block;vertical-align: top;border-right: black solid 1px;padding-bottom: 10px;height: 50%;"> 
       <div id="bugTop" style="width: 100%;background-color: lightgrey;padding: 5px;cursor: pointer;display: inline-block;">
         <i class="fas fa-bug" style="margin-right: 10px;width: 16px;display: inline-block;margin-left: 5px;" aria-hidden="true"></i>
@@ -74,12 +74,12 @@
           cursor: pointer;
         }
       </style>
-      <div id="bugList" style="overflow-y: scroll;height: calc(100% - 44px);display: flex;flex-direction: column;flex-wrap: wrap;padding-top: 5px;padding-left: 5px;align-content: flex-start;"></div>
+      <div id="bugList" style="overflow-y: scroll;height: calc(100% - 44px);flex-direction: column;flex-wrap: wrap;padding-top: 5px;padding-left: 5px;align-content: flex-start;"></div>
     </div><div id="abxCol" style="width: 34%; display: none; vertical-align: top;"> 
       <div id="abxTop" style="width: 100%;background-color: lightgrey;padding: 5px 0px;cursor: pointer;display: inline-block;">
         <i class="fas fa-capsules" style="margin-right: 10px;width: 14px;display: inline-block;margin-left: 10px;" aria-hidden="true"></i>
         <span style="display: inline-block;margin-right: 8px;">Abx</span>
-        <div style="display: inline-block;width: calc(100% - 86px);">
+        <div style="display: inline-block;width: calc(100% - 115px);">
           <div class="input-group">
             <input id="abxSearch" type="text" class="form-control" placeholder="Search">
             <div class="input-group-append">
@@ -88,29 +88,38 @@
             </div>
           </div>
         </div>
+        <i id="contraToggle" class="fas fa-filter" style="padding: 5px;"></i>
       </div>
       <div id="abxList" style="overflow-y: scroll;height: calc(100% - 296px);padding-left: 5px;padding-top: 5px;">
-        <div class="abxRow">Ampicillin / Amoxicillin</div>
-        <div class="abxRow">Ampicillin / Amoxicillin</div>
-        <div class="abxRow">Ampicillin / Amoxicillin</div>
       </div>
-      <div id="contraTop" style="width: 100%;background-color: lightgrey;padding: 5px 0px;cursor: pointer;display: inline-block;padding-left: 7px;">
-        <i class="fas fa-biohazard" style="margin-right: 10px;width: 14px;display: inline-block;" aria-hidden="true"></i>
-        <span style="display: inline-block;margin-right: 3px;">Contraindications</span>
-        <div style="display: inline-block;width: calc(100% - 170px);">
-          <input id="contraSearch" type="text" class="form-control" placeholder="Search">
+    </div>
+  </div>
+
+  <div id="contraModal" data-keyboard="false" class="modal fade" role="dialog" style="overflow: hidden">
+    <div class="modal-dialog modal-lg" style="overflow-y: initial !important;">
+      <div class="modal-content">
+        <div class="modal-header" style="display: inline-block;">
+          <i class="fas fa-biohazard" style="margin-right: 10px;width: 14px;display: inline-block;" aria-hidden="true"></i>
+          <span style="display: inline-block;margin-right: 3px;">Contraindications</span>
+          <div style="display: inline-block;width: calc(100% - 200px);">
+            <input id="contraSearch" type="text" class="form-control" placeholder="Search to Add">
+          </div>
+          <span data-dismiss="modal" class="fas fa-xmark" style="font-size: 24px;float: right;cursor: pointer;margin-top: 5px;margin-right: 5px;" aria-hidden="true"></span>
         </div>
-      </div>
-      <div id="contraList" style="overflow-y: scroll;height: 119px;padding-left: 5px;padding-top: 5px;">
-        <div class="abxRow">Pregnant</div>
+        <div id="contraList" class="modal-body" style="display: inline-block; padding-top: 20px; width: 100%; overflow-y: scroll; max-height: 722px;">
+          <div class="abxRow">Pregnant</div>
+          <div class="abxRow">Pregnant</div>
+          <div class="abxRow">Pregnant</div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
 
-    var pane = 'bug';
+    // var pane = 'bug';
     var panes = 'three';
+    var focusPane = 'bug';
 
     var openBugGroups = {};
     var targetBugs = {};
@@ -126,7 +135,7 @@
     var bugBox = null;
     var abxBox = null;
     var contraBox = null;
-    var mixedBox = null;
+    // var mixedBox = null;
 
     var getProp = function(that, prop) {
       return $(that).closest('[data-'+prop+']').attr('data-'+prop);
@@ -192,11 +201,16 @@
       };
 
       $('#bugList').empty();
-      bugItemList.map(function(item) {
+      var bugListHTML = '';
+      bugItemList.map(function(item, i) {
         if (!item.shown) return;
         var coveredByChosen = getCoveragePercent(item, [selectedAbx])
         var coveredByAll = Math.max(coveredByChosen, getCoveragePercent(item, keys(pinnedAbx)));
         // Show fractional coverage when group contains things that are covered
+
+        if (item.stack.length == 1) {
+          bugListHTML += (i != 0 ? '</div>' : '') + '<div style="display: inline-block; vertical-align: top;">';
+        }
 
         var bgColor = item.type == 'normal' ? 'lightgrey' : '#e8e8e8';
         var background = coveredByAll == 0 ? 'background-color: '+bgColor+';' :
@@ -204,7 +218,8 @@
             '#75a3ff '+coveredByChosen+'%, #65d165 '+coveredByChosen+'%,'+
             '#65d165 '+coveredByAll+'%, '+bgColor+' '+coveredByAll+'%);'
 
-        $('#bugList').append($(''+
+          bugListHTML += ''+
+        // $('#bugList').append($(''+
 `<div class="bugRow${item.type == 'normal' ? ' bugNonGroup' : ' bugGroup'}" data-key="${item.name}" style="margin-left: ${(item.stack.length-1) * 10}px;${background}">
   <div class="bugTarget" data-percent="${item.percent == null ? 0 : item.percent}" style="float: right;cursor: pointer;padding: 5px;margin-right: 0px;">
     ${(item.percent != null && item.percent != 1) ? `<svg height="15" width="15" viewBox="0 0 20 20"><circle r="5" cx="10" cy="10" fill="transparent" stroke="#0c7bff" stroke-width="10" stroke-dasharray="calc(${Math.round(item.percent * 100)} * 31.4 / 100) 31.4"></circle></svg>` :
@@ -212,8 +227,10 @@
   </div>
   ${item.type == 'normal' ? '' : `<i class="fas fa-caret-${item.type == 'open group' ? 'down': 'right'}" style="margin-right: 5px;" aria-hidden="true"></i>`}
   <span>${item.name}</span>
-</div>`));
+</div>`;//));
       });
+      $('#bugList').append($(bugListHTML + '</div>'));
+
 
       $('.bugGroup').unbind('click').click(function(e) {
         var key = getProp(this, 'key');
@@ -408,6 +425,8 @@
 
     var updateLayout = function() {
       var width = $(document).innerWidth();
+      var height = $(document).innerHeight();
+
       var oldPanes = panes;
       panes = width > 615 ? 'two' : 'one';
       if (panes != oldPanes) refresh();
@@ -417,14 +436,22 @@
       if (panes == 'two') { // Two Pane
         $('#bugCol').css('width', 'calc(100% - 335px)').css('height', '100%')
         $('#abxCol').css('width', '335px').css('height', '100%')
-        $('#bugList').css('height', 'calc(100% - 44px)');
-        $('#abxList').css('height', 'calc(100% - 215px)');
-        $('#contraList, #contraTop').show();
-      } else if (panes == 'one') { // One Pane
-        $('#bugCol, #abxCol').css('width', '100%').css('height', '50%')
         $('#bugList, #abxList').css('height', 'calc(100% - 44px)');
+      } else if (panes == 'one') { // One Pane
+
+        if (height < 430) { // Only focus on one. Looks like keyboard shrunk the view.
+          $('#bugList, #abxList').css('height', 'calc(100% - 44px)');
+          $('#abxCol, #bugCol').css('width', '100%').css('height', '100%');
+          if (focusPane == 'bug') $('#abxCol, abxList').hide();
+          else if (focusPane == 'abx') $('#bugCol, bugList').hide();
+
+        } else {
+
+          $('#bugCol, #abxCol').css('width', '100%').css('height', '50%')
+          $('#bugList, #abxList').css('height', 'calc(100% - 44px)');
+
+        }
         // $('#abxList').css('height', 'calc(100% - 215px)');
-        $('#contraList, #contraTop').hide();
 
         // $('#bugCol, #abxCol').css('width', '100%').css('height', 'calc(100% - 49px)')
         // $('#bugCol').toggle(pane == 'bug');
@@ -461,12 +488,12 @@
         });
       }
 
-      $('.mobileTab').removeClass('btn-secondary').addClass('btn-light').unbind('click').click(function() {
-        pane = getProp(this, 'type');
-        refresh();
-        updateLayout();
-      });
-      $('.mobileTab[data-type="'+pane+'"]').addClass('btn-secondary').removeClass('btn-light')
+      // $('.mobileTab').removeClass('btn-secondary').addClass('btn-light').unbind('click').click(function() {
+      //   pane = getProp(this, 'type');
+      //   refresh();
+      //   updateLayout();
+      // });
+      // $('.mobileTab[data-type="'+pane+'"]').addClass('btn-secondary').removeClass('btn-light')
       // $('#bodyMain').css('height', panes == 'one' ? '100%' : 'calc(100% - 55px)');
 
       $('.routeToggle').removeClass('btn-primary').addClass('btn-light').unbind('click').click(function() {
@@ -502,6 +529,11 @@
         refresh();
       };
 
+      $('#bugSearch').unbind('focus').on('focus', function() {
+        focusPane = 'bug';
+        console.log('focused on ', focusPane);
+      });
+
       // Combination of bugs and conditions
       bugBox = new Awesomplete($('#bugSearch')[0], {
         list: [], minChars: 0, autoFirst: true, maxItems: 8,
@@ -518,6 +550,11 @@
       var bugSearchList = [];
       addToBugList(bugList, bugSearchList, [], true);
       bugBox.list = bugSearchList.concat(conditionList);;
+
+      $('#abxSearch').unbind('focus').on('focus', function() {
+        focusPane = 'abx';
+        console.log('focused on ', focusPane);
+      });
 
       abxBox = new Awesomplete($('#abxSearch')[0], {
         list: [], minChars: 0, autoFirst: true, maxItems: 8,
@@ -559,24 +596,31 @@
         refresh();
       });
 
-      mixedBox = new Awesomplete($('#mixedSearch')[0], {
-        list: [], minChars: 0, autoFirst: true, maxItems: 8,
-        data: function(item) {
-          return { label: item.name, value: item };
-        }
+      // mixedBox = new Awesomplete($('#mixedSearch')[0], {
+      //   list: [], minChars: 0, autoFirst: true, maxItems: 8,
+      //   data: function(item) {
+      //     return { label: item.name, value: item };
+      //   }
+      // });
+      // mixedBox.container.addEventListener("awesomplete-selectcomplete", function(data) {
+      //   $('#mixedSearch').val('');
+      //   var value = data.text.value;
+      //   if (pane == 'abx') {
+      //     pinnedAbx[value.name] = true;
+      //     selectedAbx = null;
+      //   } else if (pane == 'bug') {
+      //     showBug(value);
+      //   }
+      //   refresh();
+      // });
+      // $('#mixedSearch').parent().css('font-size','16px');
+
+      $('#contraToggle').unbind('click').click(function() {
+        $('#contraModal').modal({ show: true });
+        setTimeout(function() {
+          setMaxHeight('#contraModal');
+        }, 200);
       });
-      mixedBox.container.addEventListener("awesomplete-selectcomplete", function(data) {
-        $('#mixedSearch').val('');
-        var value = data.text.value;
-        if (pane == 'abx') {
-          pinnedAbx[value.name] = true;
-          selectedAbx = null;
-        } else if (pane == 'bug') {
-          showBug(value);
-        }
-        refresh();
-      });
-      $('#mixedSearch').parent().css('font-size','16px')
 
       $('[data-toggle="tooltip"]').tooltip();
 
