@@ -154,11 +154,12 @@
     var bugJumps = {};
     var bugPaths = {};
     var abxJumps = {};
+    var shownBugs = {};
 
     var addToBugList = function(list, outlist, stack, shown) {
       for (var key in list) {
         bugJumps[key] = list[key];
-        if (!shown) delete targetBugs[key];
+        if (shown) shownBugs[key] = true;
         var newStack = [key].concat(clone(stack));
         bugPaths[key] = newStack;
         var selectedLevel = newStack.find(function(bugLevel) {
@@ -176,7 +177,9 @@
 
     var refresh = function() {
       var bugItemList = [];
+      shownBugs = {};
       addToBugList(bugList, bugItemList, [], true);
+      for (var key in targetBugs) if (shownBugs[key] == null) delete targetBugs[key];
 
       var anySelected = !isEmpty(targetBugs);
 
