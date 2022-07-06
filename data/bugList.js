@@ -73,6 +73,16 @@ var bugList = {
     'Legionella': true,
     'Mycoplasma': true
   },
+  'Anaerobes': {
+    'Bacteroides': {
+      'Bacteroides Fragilis': true,
+      'Bacteroides (not Fragilis)': true
+    },
+    'Clostridium': {
+      'Clostridium Perfringens': true,
+      'Clostridium (not perfringens)': true
+    }
+  },
   'Fungi': {
     'Candida': {
       'Candida Albicans': true,

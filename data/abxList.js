@@ -76,6 +76,7 @@ var abxList = [
   {
     "name": "Amoxicillin",
     "admin": "IV,PO",
+    cost: '$',
     "coverage": {
       "Streptococcus": 1,
       "E. Coli": 1,
@@ -126,8 +127,9 @@ var abxList = [
     ]
   },
   {
-    "name": "Cephalexin",
+    "name": "Cephalexin (Keflex)",
     "admin": "PO",
+    cost: '$',
     "coverage": {
       "MSSA": 1,
       "Streptococcus": 1,
@@ -199,6 +201,7 @@ var abxList = [
   {
     "name": "Cefoxitin",
     "admin": "IV",
+    cost: '$',
     "coverage": {
       "Serratia Marcescens": 0.04,
       "Klebsiella Pneumoniae": 0,
@@ -211,6 +214,7 @@ var abxList = [
   {
     "name": "Cefotetan",
     "admin": "IV",
+    cost: '$',
     "coverage": {
       "E. Coli": 0.99,
       "Klebsiella Oxytoca": 1,
@@ -462,7 +466,8 @@ var abxList = [
       "Pseudomonas Aeruginosa CF non-mucoid": 0.55,
       "Salmonella": 0.85,
       "Campylobacter": 0.61
-    }
+    },
+    contra: ['Pregnancy']
   },
   {
     "name": "Levofloxacin",
@@ -494,7 +499,8 @@ var abxList = [
       "Proteus Vulgaris": 1,
       "Pseudomonas Aeruginosa CF mucoid": 0.61,
       "Pseudomonas Aeruginosa CF non-mucoid": 0.28
-    }
+    },
+    contra: ['Pregnancy']
   },
   {
     "name": "Moxifloxacin",
@@ -516,7 +522,8 @@ var abxList = [
       "MRSA": 0.23,
       "Staphylococcus Lugdunensis": 1,
       "Staphylococcus Epidermidis": 0.56
-    }
+    },
+    contra: ['Pregnancy']
   },
   {
     "name": "Gentamicin",
@@ -635,6 +642,7 @@ var abxList = [
   {
     "name": "Azithromycin",
     "admin": "IV,PO",
+    cost: '$',
     "coverage": {
       "Staph Aureus": 0.48,
       "MSSA": 1,
@@ -674,6 +682,7 @@ var abxList = [
   {
     "name": "Doxycycline",
     "admin": "IV,PO",
+    cost: '$',
     "coverage": {
       "Streptococcus": 1,
       "E. Coli": 1,
@@ -780,7 +789,8 @@ var abxList = [
     "coverage": {
       "Enterococcus Faecalis": 0.81,
       "Enterococcus Faecium": 0.48
-    }
+    },
+    contra: ['Pregnancy']
   },
   {
     "name": "Amphotericin B",
@@ -810,6 +820,7 @@ var abxList = [
     "name": "Fluconazole",
     "admin": "IV,PO",
     cost: '$',
+    contra: ['Pregnancy'],
     "coverage": {
       "Candida Albicans": 0.99,
       "Candida Glabrata": 0.87,
@@ -833,7 +844,8 @@ var abxList = [
     "admin": "PO",
     "coverage": {
       "Burkholderia Cepacia": 0.8
-    }
+    },
+    contra: ['Pregnancy']
   },
   {
     "name": "Ceftolozane-Tazobactam",
@@ -930,7 +942,7 @@ var abxList = [
 //   { name: 'Ampicillin', admin: 'IV', coverage: {'Streptococcus': 1, 'E. Coli': 0.53, 'Proteus Mirabilis': 1, 'N. Meningitis': 1} }, 
 //   { name: 'Amoxicillin', admin: 'IV,PO', coverage: {'Streptococcus': 1, 'E. Coli': 1, 'Proteus Mirabilis': 1, 'N. Meningitis': 1}, contra: ['Beta Lactam Allergy'] }, 
 //   { name: 'Cefazolin (Ancef)', admin: 'IV', coverage: {'Citrobacter Freundii': 0, 'MSSA': 1, 'Streptococcus': 1, 'E. Coli': 0.82, 'Proteus Mirabilis': 0.87, 'Klebsiella Pneumoniae': 0.87, 'Klebsiella Oxytoca': 0.52, 'Klebsiella Aerogenes': 0 }, contra: ['Beta Lactam Allergy'] }, 
-//   { name: 'Cephalexin', admin: 'PO', coverage: {'MSSA': 1, 'Streptococcus': 1, 'E. Coli': 1, 'Proteus Mirabilis': 1, 'Klebsiella': 1}, contra: ['Beta Lactam Allergy'] }, 
+//   { name: 'Cephalexin (Keflex)', admin: 'PO', coverage: {'MSSA': 1, 'Streptococcus': 1, 'E. Coli': 1, 'Proteus Mirabilis': 1, 'Klebsiella': 1}, contra: ['Beta Lactam Allergy'] }, 
 //   { name: 'Ceftriaxone', admin: 'IV', coverage: {'Serratia Marcescens': 0.95, 'Klebsiella Pneumoniae': 0.84, 'Klebsiella Oxytoca': 0.96, 'Enterobacter Cloacae': 0.78, 'MSSA': 1, 'Streptococcus': 0.93, 'E. Coli': 0.9, 'Proteus Mirabilis': 1, 'Klebsiella Aerogenes': 0.84, 'ESCAPPM': 1, 'N. Gonorrhoeae': 1, 'N. Meningitis': 1, 'Acinetobacter Baumannii': 0.26}, contra: ['Beta Lactam Allergy'] }, 
 //   { name: 'Ceftazidime', admin: 'IV', coverage: {'Stenotrophomonas Maltophilia': 0.47, 'Streptococcus': 1, 'E. Coli': 1, 'Proteus Mirabilis': 1, 'Klebsiella': 1, 'Pseudomonas Aeruginosa': 0.9} }, 
 //   { name: 'Cefotaxime', admin: 'IV', coverage: {'Serratia Marcescens': 0.83, 'Klebsiella Pneumoniae': 0.7, 'Klebsiella Aerogenes': 0.7, 'E. Coli': 0.69, 'Enterobacter Cloacae': 0.6, 'Streptococcus': 1, 'Acinetobacter Baumannii': 0.74 } }, 
