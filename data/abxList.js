@@ -285,7 +285,7 @@ var abxList = [
   },
   {
     "name": "Ampicillin + Sulbactam (Unasyn)",
-    "admin": "IV,PO",
+    "admin": "IV",
     cost: '$',
     "coverage": {
       "Klebsiella Oxytoca": 0.71,

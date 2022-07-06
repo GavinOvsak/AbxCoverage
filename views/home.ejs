@@ -19,6 +19,30 @@
   <link rel="apple-touch-icon" href="favicon.ico">
   <link rel="stylesheet" href="/res/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="/res/css/awesomplete.css">
+  <style>
+    .btn:focus { outline:none; }
+    .bigBugBox {
+      margin-bottom: 15px;
+    }
+    .bugRow {
+      padding: 6px;
+      border-radius: 5px;
+      width: 220px;
+      margin-bottom: 5px;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+    .abxRow {
+      width: calc(100% - 5px);
+      display: inline-block;
+      margin-bottom: 5px;
+      background-color: #e8e8e8;
+      border-radius: 5px;
+      padding: 5px;
+      text-align: center;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body style="user-select: none;">
   <div id="topBar" style="width: 100%; display: inline-block;">
@@ -54,35 +78,12 @@
         </div>
         <div id="resetBugs" class="btn btn-light" style="vertical-align: top;">Reset</div>
       </div>
-      <style>
-        .bigBugBox {
-          margin-bottom: 15px;
-        }
-        .bugRow {
-          padding: 6px;
-          border-radius: 5px;
-          width: 220px;
-          margin-bottom: 5px;
-          margin-right: 5px;
-          cursor: pointer;
-        }
-        .abxRow {
-          width: calc(100% - 5px);
-          display: inline-block;
-          margin-bottom: 5px;
-          background-color: #e8e8e8;
-          border-radius: 5px;
-          padding: 5px;
-          text-align: center;
-          cursor: pointer;
-        }
-      </style>
       <div id="bugList" style="overflow-y: scroll;height: calc(100% - 44px);flex-direction: column;flex-wrap: wrap;padding-top: 5px;padding-left: 5px;align-content: flex-start;display: flex;"></div>
     </div><div id="abxCol" style="width: 34%; display: none; vertical-align: top;"> 
       <div id="abxTop" style="width: 100%;background-color: lightgrey;padding: 5px 0px;cursor: pointer;display: inline-block;">
         <i class="fas fa-capsules" style="margin-right: 10px;width: 14px;display: inline-block;margin-left: 10px;" aria-hidden="true"></i>
         <span style="display: inline-block;margin-right: 8px;">Abx</span>
-        <div style="display: inline-block;width: calc(100% - 115px);">
+        <div style="display: inline-block;width: calc(100% - 128px);">
           <div class="input-group">
             <input id="abxSearch" type="text" class="form-control" placeholder="Search">
             <div class="input-group-append">
@@ -91,7 +92,9 @@
             </div>
           </div>
         </div>
-        <i id="contraToggle" class="fas fa-filter" style="padding: 5px;"></i>
+        <div class="btn-outline-dark btn" style="padding: 10px;margin-right: 5px;vertical-align: top;">
+          <i id="contraToggle" class="fas fa-biohazard"></i>
+        </div>
       </div>
       <div id="abxList" style="overflow-y: scroll;height: calc(100% - 296px);padding-left: 5px;padding-top: 5px;">
       </div>
@@ -391,6 +394,10 @@
         '</div>'));
       });
 
+      if (abxResults.length == 0) {
+        $('#abxList').append($('<h6 style="margin: 10px;">First, pick some bugs to target or search for an antibiotic. Then select an antibiotic to see its coverage.</h6>'));
+      }
+
       // Ideally would show a circle of how much coverage each has
 
       $('.abxRow').unbind('click').click(function() {
@@ -512,8 +519,10 @@
       $('.routeToggle').removeClass('btn-primary').addClass('btn-light').unbind('click').click(function() {
         var type = getProp(this, 'type');
         abxRoutes[type] = !abxRoutes[type];
+        if (!abxRoutes['IV'] && !abxRoutes['PO']) abxRoutes = { 'IV': true, 'PO': true };
         refresh();
         updateLayout();
+        $(this).blur();
       });
       for (var route in abxRoutes) {
         if (!!abxRoutes[route]) $('.routeToggle[data-type="'+route+'"]').addClass('btn-primary').removeClass('btn-light')
