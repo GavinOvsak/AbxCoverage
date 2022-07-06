@@ -21,7 +21,7 @@ var bugList = {
   'Gram Positive Rods': {
     'Clostridium': {
       'Clostridium Perfringens': true,
-      'Clostridium (not perfringens)': true
+      'Clostridium (Not Perfringens)': true
     }
   },
   'Gram Negative Bacilli': {
@@ -80,7 +80,7 @@ var bugList = {
     },
     'Clostridium': {
       'Clostridium Perfringens': true,
-      'Clostridium (not perfringens)': true
+      'Clostridium (Not Perfringens)': true
     }
   },
   'Fungi': {

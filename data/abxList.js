@@ -15,7 +15,7 @@ var abxList = [
       "Bacteroides (not Fragilis)": 0,
       "Gram Negative Rods": 0.55,
       "Clostridium Perfringens": 1,
-      "Clostridium (not Perfringens)": 0.91,
+      "Clostridium (Not Perfringens)": 0.91,
       "Gram Positive Rods": 0.93,
       "Gram Positive Cocci": 1
     },
@@ -309,7 +309,7 @@ var abxList = [
       "Bacteroides (not Fragilis)": 0.69,
       "Gram Negative Rods": 1,
       "Clostridium Perfringens": 1,
-      "Clostridium (not Perfringens)": 0.94,
+      "Clostridium (Not Perfringens)": 0.94,
       "Gram Positive Cocci": 1
     }
   },
@@ -433,7 +433,7 @@ var abxList = [
       "Bacteroides (not Fragilis)": 0.97,
       "Gram Negative Rods": 1,
       "Clostridium Perfringens": 1,
-      "Clostridium (not Perfringens)": 1,
+      "Clostridium (Not Perfringens)": 1,
       "Gram Positive Cocci": 1
     }
   },
@@ -636,7 +636,7 @@ var abxList = [
       "Bacteroides (not Fragilis)": 0.31,
       "Gram Negative Rods": 0.43,
       "Clostridium Perfringens": 0.23,
-      "Clostridium (not Perfringens)": 0.52
+      "Clostridium (Not Perfringens)": 0.52
     }
   },
   {
@@ -896,6 +896,7 @@ var abxList = [
   {
     "name": "Metronidazole (Flagyl)",
     "admin": "IV,PO",
+    cost: '$',
     "coverage": {
       "Gram Positive Rods": 0.67,
       "Gram Positive Cocci": 0.84,
@@ -904,7 +905,7 @@ var abxList = [
       "Bacteroides (not Fragilis)": 0.97,
       "Gram Negative Rods": 1,
       "Clostridium Perfringens": 1,
-      "Clostridium (not Perfringens)": 0.97
+      "Clostridium (Not Perfringens)": 0.97
     },
     "contra": [
       "Pregnancy"
@@ -1389,12 +1390,12 @@ var abxList = [
 //   '100\tClostridium Perfringens\tMeropenem',
 //   '23\tClostridium Perfringens\tClindamycin',
 //   '100\tClostridium Perfringens\tMetronidazole',
-//   '32\tClostridium (not Perfringens)\tNumber Tested',
-//   '56\tClostridium (not Perfringens)\tPenicillin G',
-//   '94\tClostridium (not Perfringens)\tAmpicillin + Sulbactam (Unasyn)',
-//   '100\tClostridium (not Perfringens)\tMeropenem',
-//   '52\tClostridium (not Perfringens)\tClindamycin',
-//   '97\tClostridium (not Perfringens)\tMetronidazole',
+//   '32\tClostridium (Not Perfringens)\tNumber Tested',
+//   '56\tClostridium (Not Perfringens)\tPenicillin G',
+//   '94\tClostridium (Not Perfringens)\tAmpicillin + Sulbactam (Unasyn)',
+//   '100\tClostridium (Not Perfringens)\tMeropenem',
+//   '52\tClostridium (Not Perfringens)\tClindamycin',
+//   '97\tClostridium (Not Perfringens)\tMetronidazole',
 //   '28\tGram Positive Rods\tNumber Tested',
 //   '93\tGram Positive Rods\tPenicillin G',
 //   '100\tGram Positive Rods\tAmpicillin + Sulbactam (Unasyn)',
