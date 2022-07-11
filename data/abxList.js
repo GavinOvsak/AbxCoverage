@@ -70,7 +70,8 @@ var abxList = [
       "Morganella": 0,
       "Proteus Vulgaris": 0,
       "Salmonella": 0.89,
-      "Serratia Marcescens": 0
+      "Serratia Marcescens": 0,
+      'H. Influenzae': 0
     }
   },
   {
@@ -92,7 +93,8 @@ var abxList = [
       "Morganella": 0,
       "Proteus Vulgaris": 0,
       "Salmonella": 0.89,
-      "Serratia Marcescens": 0
+      "Serratia Marcescens": 0,
+      'H. Influenzae': 0.82
     },
     "contra": [
       "Beta Lactam Allergy"
@@ -166,7 +168,8 @@ var abxList = [
       "Citrobacter Koseri": 0.99,
       "E. coli": 0.88,
       "Morganella": 0.92,
-      "Salmonella": 0.96
+      "Salmonella": 0.96,
+      'H. Influenzae': 1
     },
     "contra": [
       "Beta Lactam Allergy"
@@ -235,7 +238,8 @@ var abxList = [
       "Enterobacter Cloacae": 0.15,
       "E. Coli": 0.81,
       "Klebsiella Aerogenes": 0.26,
-      "Streptococcus Pneumoniae": 0.94
+      "Streptococcus Pneumoniae": 0.94,
+      'H. Influenzae': 0.84
     }
   },
   {
@@ -280,7 +284,8 @@ var abxList = [
       "Proteus Mirabilis": 1,
       "Klebsiella Aerogenes": 0.05,
       "Gram Positive Rods": 1,
-      "Bacteroides": 1
+      "Bacteroides": 1,
+      'H. Influenzae': 0.98
     }
   },
   {
@@ -649,7 +654,8 @@ var abxList = [
       "MSSA": 1,
       "Streptococcus": 1,
       "N. Meningitis": 1,
-      "Atypicals": 1
+      "Atypicals": 1,
+      'H. Influenzae': 0
     }
   },
   {
@@ -763,7 +769,8 @@ var abxList = [
       "MSSA": 0.71,
       "Staphylococcus Lugdunensis": 0.84,
       "Staphylococcus Epidermidis": 0.33,
-      "Campylobacter": 0.98
+      "Campylobacter": 0.98,
+      'H. Influenzae': 0
     }
   },
   {

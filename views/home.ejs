@@ -120,7 +120,7 @@
   <script>
 
     // var pane = 'bug';
-    var panes = 'three';
+    var panes = null;
     var focusPane = 'bug';
 
     var openBugGroups = {};
@@ -171,6 +171,53 @@
         } else {
           outlist.push({name: key, type: 'normal', stack: newStack, percent: targetBugs[selectedLevel], shown: shown });
         }
+      }
+    };
+
+    var importFromState = function(state) {
+      targetBugs = {};
+      if ((state.bugs || '').length > 0) {
+        (state.bugs || '').split(',').map(function(bugHash) {
+          var splitBug = bugHash.split(':');
+          targetBugs[splitBug[0]] = splitBug[1] == null ? 1 : parseFloat(splitBug[1]);
+        });
+      }
+
+      abxRoutes = {};
+      if ((state.routes || '').length > 0) {
+        (state.routes || '').split(',').map(function(name) {
+          abxRoutes[name] = true;
+        });
+      }
+
+      if ((state.contra || '').length > 0) selectedContraList = (state.contra || '').split(',');
+
+      pinnedAbx = {};
+      if ((state.abx || '').length > 0) {
+        (state.abx || '').split(',').map(function(name) {
+          pinnedAbx[name] = true;
+        });
+      }
+    };
+
+    var updateUrl = function(opts) {
+      opts = opts || {};
+
+      var params = {};
+      if (keys(targetBugs).length > 0) params.bugs = keys(targetBugs).map(bug => bug + ':' + targetBugs[bug]).join(',');
+      if (keys(abxRoutes).filter(n => !!abxRoutes[n]).length > 0) params.routes = keys(abxRoutes).filter(n => !!abxRoutes[n]).join(',');
+      if (selectedContraList.length > 0) params.contra = selectedContraList.join(',');
+      if (keys(pinnedAbx).length > 0) params.abx = keys(pinnedAbx).join(',');
+
+      window.history[!!opts.replace ? 'replaceState' : 'pushState'](
+        params, 'Abx Coverage', '/?' + keys(params).map(param => param + '=' + encodeURIComponent(params[param])).join('&') + '#'
+      );
+    };
+
+    window.onpopstate = function(e){
+      if (e.state != null) {
+        importFromState(e.state);
+        refresh();
       }
     };
 
@@ -246,6 +293,7 @@
       $('#resetBugs').unbind('click').click(function() {
         targetBugs = {};
         openBugGroups = {};
+        updateUrl();
         refresh();
       });
 
@@ -258,11 +306,12 @@
           }
         });
         if (!wasTargetted) targetBugs[bug] = level;
+        updateUrl();
         refresh();
         var nonPinnedAbx = abxResults.filter(function(n) {
           return pinnedAbx[n.abx.name] == null && (n.abx.cost == null || n.abx.cost == '$');
         });
-        if (nonPinnedAbx.length > 0) {
+        if (nonPinnedAbx.length > 0 && keys(pinnedAbx).length == 0) {
           selectedAbx = nonPinnedAbx[0].abx.name; 
           refresh();
         }
@@ -480,7 +529,10 @@
           }
         }
       });
-      if (anyRemoved) return refresh();
+      if (anyRemoved) {
+        updateUrl();
+        return refresh();
+      }
 
       $('#abxList').empty();
       abxResults = _.orderBy(abxResults, [function(data) {
@@ -523,6 +575,7 @@
         else pinnedAbx[name] = true;
         selectedAbx = null;
         e.stopPropagation();
+        updateUrl();
         refresh();
       });
 
@@ -551,6 +604,7 @@
         selectedContraList = selectedContraList.filter(function(n) {
           return n != type;
         });
+        updateUrl();
         refresh();
       });
     };
@@ -630,6 +684,7 @@
         var type = getProp(this, 'type');
         abxRoutes[type] = !abxRoutes[type];
         if (!abxRoutes['IV'] && !abxRoutes['PO']) abxRoutes = { 'IV': true, 'PO': true };
+        updateUrl();
         refresh();
         updateLayout();
         $(this).blur();
@@ -658,6 +713,7 @@
           });
           targetBugs[bugName] = includes[bugName];
         });
+        updateUrl();
         refresh();
         var nonPinnedAbx = abxResults.filter(function(n) {
           return pinnedAbx[n.abx.name] == null && (n.abx.cost == null || n.abx.cost == '$');
@@ -706,6 +762,7 @@
         var value = data.text.value;
         pinnedAbx[value.name] = true;
         selectedAbx = null;
+        updateUrl();
         refresh();
       });
       abxBox.container.addEventListener("awesomplete-highlight", function(data) {
@@ -732,6 +789,7 @@
         $('#contraSearch').val('');
         var value = data.text.value;
         if (selectedContraList.indexOf(value) == -1) selectedContraList.push(value);
+        updateUrl();
         refresh();
       });
 
@@ -791,8 +849,22 @@
       // $('#surgerySearch, #blockSearch').parent().css('width', 'calc(100% - 10px)');
       // $('#surgerySearch, #blockSearch').parent().find('ul').css('margin-left', '5px');
 
+      var state = {
+        bugs: getParameterByName('bugs'),
+        routes: getParameterByName('routes'),
+        abx: getParameterByName('abx'),
+        contra: getParameterByName('contra'),
+      };
+      importFromState(state);
+      updateUrl({ replace: true });
       updateLayout();
-      refresh();
+      var nonPinnedAbx = abxResults.filter(function(n) {
+        return pinnedAbx[n.abx.name] == null && (n.abx.cost == null || n.abx.cost == '$');
+      });
+      if (nonPinnedAbx.length > 0 && keys(pinnedAbx).length == 0) {
+        selectedAbx = nonPinnedAbx[0].abx.name; 
+        refresh();
+      }
     });
   </script>
 </body>

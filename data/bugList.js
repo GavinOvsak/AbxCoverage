@@ -59,6 +59,7 @@ var bugList = {
     }
   },
   'Gram Negative Cocci': {
+    'H. Influenzae': true,
     'N. Gonorrhoeae': true,
     'N. Meningitis': true
   },
