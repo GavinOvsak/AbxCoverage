@@ -304,7 +304,7 @@
 
 
 
-      abxResults = abxList.map(function(abx) {
+      var allAbxResults = abxList.map(function(abx) {
         if (selectedContraList.some(function(contraName) {
           return (abx.contra || []).indexOf(contraName) >= 0;
         })) return { coverage: [] }; // Avoid contra
@@ -323,38 +323,16 @@
           generalCoverage[bugItem.name] = abxCoverageLevel != null ? abx.coverage[abxCoverageLevel] : 0;
         });
 
-        var specificCoverage = {};
-        targetBugList.map(function(bugItem) {
-          var abxCoverageLevel = bugPaths[bugItem.name].find(function(bugLevel) {
-            return abx.coverage[bugLevel] >= 0;
-          });
-          specificCoverage[bugItem.name] = abxCoverageLevel != null ? abx.coverage[abxCoverageLevel] : 0;
-        });
-
-        return { abx: abx, generalCoverage: generalCoverage, specificCoverage: specificCoverage }
+        return { abx: abx, generalCoverage: generalCoverage }
       }).filter(function(data) {
-        return data.abx != null && (keys(data.specificCoverage).some(function(coverName) {
-          return currentCoverage[coverName] == null || data.specificCoverage[coverName] > currentCoverage[coverName];
-        }) || !!pinnedAbx[data.abx.name]);
+        return data.abx != null;
       });
-
-      var anyRemoved = false;
-      keys(pinnedAbx).concat([selectedAbx]).map(function(abxName) {
-        if (abxName != null && abxResults.every(function(data) {
-          return data.abx.name != abxName;
-        })) {
-          if (selectedAbx == abxName && !abxBox.opened) {
-            selectedAbx = null;
-            anyRemoved = true;
-          }
-          if (pinnedAbx[abxName] != null) {
-            delete pinnedAbx[abxName];
-            anyRemoved = true;
-          }
-        }
+      
+      abxResults = allAbxResults.filter(function(data) {
+        return targetBugList.some(function(bugItem) {
+          return currentCoverage[bugItem.name] == null || data.generalCoverage[bugItem.name] > currentCoverage[bugItem.name];
+        }) || !!pinnedAbx[data.abx.name];
       });
-      if (anyRemoved) return refresh();
-
 
       var specificCoverageScore = function(data, targetBugList, relative) {
         var addedWeightedBenefit = 0;
@@ -368,7 +346,7 @@
           var weight = targetBugs[targetBugName];
           var currentLevel = (currentCoverage[bugItem.name] == null || !relative) ? 0 : currentCoverage[bugItem.name];
           maxSpecificCoverage += weight * (1 - currentLevel);
-          var addedBenefit = data.specificCoverage[bugItem.name] == null ? 0 : Math.max(0, data.specificCoverage[bugItem.name] - currentLevel);
+          var addedBenefit = data.generalCoverage[bugItem.name] == null ? 0 : Math.max(0, data.generalCoverage[bugItem.name] - currentLevel);
           if (addedBenefit > 0) addedWeightedBenefit += weight * addedBenefit;
         });
 
@@ -386,13 +364,23 @@
 
       // Get best abx for each target bug
       var individualTops = {};
-      targetBugList.map(function(bugItem) {
-        var bugTops = _.sortBy(abxResults.filter(function(n) {
+      targetBugList.map(function(bugItem, i) {
+        var bugTops = _.sortBy(allAbxResults.filter(function(n) {
           return n.abx.cost == null || n.abx.cost == '$';
         }), function(data) {
           return specificCoverageScore(data, [bugItem], false);
         });
         individualTops[bugTops[0].abx.name] = bugTops[0];
+
+        // Consider top for any two?
+        // targetBugList.slice(i+1).map(function(otherBugItem, j) {
+        //   var bugTops = _.sortBy(allAbxResults.filter(function(n) {
+        //     return n.abx.cost == null || n.abx.cost == '$';
+        //   }), function(data) {
+        //     return specificCoverageScore(data, [bugItem, otherBugItem], false);
+        //   });
+        //   individualTops[bugTops[0].abx.name] = bugTops[0];
+        // });
       });
 
       var removeRedundancies = function(list) {
@@ -415,15 +403,15 @@
           [item.abx.name]: item
         }];
         targetBugList.map(function(bugItem) {
-          if (item.specificCoverage[bugItem.name] <= thresh) {
+          if (item.generalCoverage[bugItem.name] <= thresh) {
             var newCombos = [];
             var addAbx = keys(individualTops).filter(function(otherAbxName) {
-              return individualTops[otherAbxName].specificCoverage[bugItem.name] > thresh && otherAbxName != item.abx.name;
+              return individualTops[otherAbxName].generalCoverage[bugItem.name] > thresh && otherAbxName != item.abx.name;
             });
             combos.map(function(comboItem) {
               // If combo already covered this, skip and leave as is
               if (keys(comboItem).some(function(comboItemName) {
-                return individualTops[comboItemName].specificCoverage[bugItem.name] > thresh;
+                return individualTops[comboItemName].generalCoverage[bugItem.name] > thresh;
               })) return newCombos.push(comboItem);
               addAbx.map(function(otherAbxName) {
                 var newCombo = clone(comboItem);
@@ -437,7 +425,62 @@
         abxCombinations = abxCombinations.concat(removeRedundancies(combos));
         abxCombinations = removeRedundancies(abxCombinations);
       }
-      console.log({abxCombinations});
+
+      // abxCombinations.push({
+      //   'Vancomycin': allAbxResults.find(n => n.abx.name == 'Vancomycin'),
+      //   'Cefepime': allAbxResults.find(n => n.abx.name == 'Cefepime')
+      // });
+
+      console.log({individualTops, allAbxResults, abxCombinations});
+
+      // Only top 3 combos
+      abxResults = abxResults.concat(_.sortBy(abxCombinations.filter(function(combo) {
+        return keys(combo).length > 1;
+      }).map(function(combo) {
+        var list = _.values(combo);
+        var allIV = list.every(n => n.abx.admin.split(',').indexOf('IV') >= 0);
+        var allPO = list.every(n => n.abx.admin.split(',').indexOf('PO') >= 0);
+        var newOption = {
+          abx: {
+            name: list.map(n => n.abx.name).join(' + '),
+            admin: [allIV ? 'IV': null, allPO ? 'PO' : null].filter(n => n != null).join(','), 
+            cost: _.maxBy(list.map(n => n.abx.cost), n => (n || '').length), 
+            coverage: {}
+          },
+          generalCoverage: {}
+        };
+        abxJumps[newOption.abx.name] = newOption.abx;
+
+        list.map(function(abxItem) {
+          for (var bug in abxItem.abx.coverage) {
+            if (newOption.abx.coverage[bug] == null || abxItem.abx.coverage[bug] > newOption.abx.coverage[bug]) newOption.abx.coverage[bug] = abxItem.abx.coverage[bug];
+          }
+          for (var bug in abxItem.generalCoverage) {
+            if (newOption.generalCoverage[bug] == null || abxItem.generalCoverage[bug] > newOption.generalCoverage[bug]) newOption.generalCoverage[bug] = abxItem.generalCoverage[bug];
+          }
+        });
+
+        return newOption;
+      }), function(data) {
+        return specificCoverageScore(data, targetBugList, pinnedAbx[data.abx.name] == null);
+      }).slice(0,3));
+
+      var anyRemoved = false;
+      keys(pinnedAbx).concat([selectedAbx]).map(function(abxName) {
+        if (abxName != null && abxResults.every(function(data) {
+          return data.abx.name != abxName;
+        })) {
+          if (selectedAbx == abxName && !abxBox.opened) {
+            selectedAbx = null;
+            anyRemoved = true;
+          }
+          if (pinnedAbx[abxName] != null) {
+            delete pinnedAbx[abxName];
+            anyRemoved = true;
+          }
+        }
+      });
+      if (anyRemoved) return refresh();
 
       $('#abxList').empty();
       abxResults = _.orderBy(abxResults, [function(data) {
