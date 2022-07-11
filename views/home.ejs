@@ -112,11 +112,7 @@
           </div>
           <span data-dismiss="modal" class="fas fa-xmark" style="font-size: 24px;float: right;cursor: pointer;margin-top: 5px;margin-right: 5px;" aria-hidden="true"></span>
         </div>
-        <div id="contraList" class="modal-body" style="display: inline-block; padding-top: 20px; width: 100%; overflow-y: scroll; max-height: 722px;">
-          <div class="abxRow">Pregnant</div>
-          <div class="abxRow">Pregnant</div>
-          <div class="abxRow">Pregnant</div>
-        </div>
+        <div id="contraList" class="modal-body" style="display: inline-block; padding-top: 20px; width: 100%; overflow-y: scroll; max-height: 722px;"></div>
       </div>
     </div>
   </div>
@@ -297,7 +293,17 @@
         });
         currentCoverage[bugItem.name] = maxCoverage;
       });
-      
+
+      // All combinations?
+      // Take the top from each individually and try combining them?
+      // Some may not add
+
+      // If any are worse across the board than any specific other, remove. Otherwise, start with each one and make combinations with any others until they stop adding more coverage.
+      // Maybe treat > 80% as good enough for "coverage" of a target bug
+      // Remove things which accomplish the goal with less items.
+
+
+
       abxResults = abxList.map(function(abx) {
         if (selectedContraList.some(function(contraName) {
           return (abx.contra || []).indexOf(contraName) >= 0;
@@ -349,11 +355,8 @@
       });
       if (anyRemoved) return refresh();
 
-      $('#abxList').empty();
-      abxResults = _.orderBy(abxResults, [function(data) {
-        return !!pinnedAbx[data.abx.name] ? -1 : 0;
-      }, function(data) {
-        // Sort by the weighted added benefit to the targetBugs
+
+      var specificCoverageScore = function(data, targetBugList, relative) {
         var addedWeightedBenefit = 0;
         var maxSpecificCoverage = 0;
         var targetBugNames = {};
@@ -363,7 +366,7 @@
           });
           targetBugNames[targetBugName] = true;
           var weight = targetBugs[targetBugName];
-          var currentLevel = currentCoverage[bugItem.name] == null ? 0 : currentCoverage[bugItem.name];
+          var currentLevel = (currentCoverage[bugItem.name] == null || !relative) ? 0 : currentCoverage[bugItem.name];
           maxSpecificCoverage += weight * (1 - currentLevel);
           var addedBenefit = data.specificCoverage[bugItem.name] == null ? 0 : Math.max(0, data.specificCoverage[bugItem.name] - currentLevel);
           if (addedBenefit > 0) addedWeightedBenefit += weight * addedBenefit;
@@ -378,14 +381,78 @@
           }
         }
 
-        // if (data.abx.name == 'Ertapenem') debugger;
         return -1 * (addedWeightedBenefit/maxSpecificCoverage) + (nonTargetOverlap / nonTargetMax) / 2;
+      };
+
+      // Get best abx for each target bug
+      var individualTops = {};
+      targetBugList.map(function(bugItem) {
+        var bugTops = _.sortBy(abxResults.filter(function(n) {
+          return n.abx.cost == null || n.abx.cost == '$';
+        }), function(data) {
+          return specificCoverageScore(data, [bugItem], false);
+        });
+        individualTops[bugTops[0].abx.name] = bugTops[0];
+      });
+
+      var removeRedundancies = function(list) {
+        return _.uniqBy(list.filter(function(comboItem, i) {
+          // No other combo covers the same with less
+          return !list.some(function(otherComboItem, o_i) {
+            return o_i != i && keys(otherComboItem).length < keys(comboItem).length && keys(otherComboItem).every(n => comboItem[n] != null);
+          });
+        }), function(comboItem) {
+          return _.sortBy(keys(comboItem)).join(',');
+        });
+      }
+
+      var thresh = 0.8; // More than this coverage is acceptable
+      var abxCombinations = [];
+      for (var abxName in individualTops) {
+        var item = individualTops[abxName];
+        var coverage = {};
+        var combos = [{
+          [item.abx.name]: item
+        }];
+        targetBugList.map(function(bugItem) {
+          if (item.specificCoverage[bugItem.name] <= thresh) {
+            var newCombos = [];
+            var addAbx = keys(individualTops).filter(function(otherAbxName) {
+              return individualTops[otherAbxName].specificCoverage[bugItem.name] > thresh && otherAbxName != item.abx.name;
+            });
+            combos.map(function(comboItem) {
+              // If combo already covered this, skip and leave as is
+              if (keys(comboItem).some(function(comboItemName) {
+                return individualTops[comboItemName].specificCoverage[bugItem.name] > thresh;
+              })) return newCombos.push(comboItem);
+              addAbx.map(function(otherAbxName) {
+                var newCombo = clone(comboItem);
+                newCombo[otherAbxName] = individualTops[otherAbxName];
+                newCombos.push(newCombo);
+              });
+            });
+            combos = newCombos;
+          }
+        });
+        abxCombinations = abxCombinations.concat(removeRedundancies(combos));
+        abxCombinations = removeRedundancies(abxCombinations);
+      }
+      console.log({abxCombinations});
+
+      $('#abxList').empty();
+      abxResults = _.orderBy(abxResults, [function(data) {
+        return !!pinnedAbx[data.abx.name] ? -1 : 0;
+      }, function(data) {
+        // Sort by the weighted added benefit to the targetBugs
+        return specificCoverageScore(data, targetBugList, pinnedAbx[data.abx.name] == null);
+        
         // return -data.coverage.filter(function(name) {
         //   return currentCoverage.indexOf(name) == -1;
         // }).length;
       }, function(data) { // Discourage broad spectrum drugs if no added benefit
         return _.sum(_.values(data.generalCoverage));
       }]);
+
       abxResults.map(function(data) {
         // background-color: #0c7bff; color: white;
         $('#abxList').append($('<div data-name="'+data.abx.name+'" class="abxRow" style="'+(selectedAbx == data.abx.name ? 'background-color: #75a3ff;' : !!pinnedAbx[data.abx.name] ? 'background-color: #65d165' : '')+'">'+
@@ -395,7 +462,7 @@
       });
 
       if (abxResults.length == 0) {
-        $('#abxList').append($('<h6 style="margin: 10px;">First, pick some bugs to target or search for an antibiotic. Then select an antibiotic to see its coverage.</h6>'));
+        $('#abxList').append($('<h6 style="margin: 10px;">First, pick some bugs to target or search for an antibiotic. Then select an antibiotic to see its coverage.<br><br>Sources:<br><a target="_blank" href="https://www.mass.gov/service-details/massachusetts-antibiograms">- Massachusetts Antibiogram</a><br><a target="_blank" href="https://med.stanford.edu/content/dam/sm/bugsanddrugs/documents/clinicalmicrobiology/AntibiogramsCombined/2020-SHC-Antibiogram.pdf">- Stanford Antibiogram</a><br></h6>'));
       }
 
       // Ideally would show a circle of how much coverage each has
