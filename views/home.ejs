@@ -183,8 +183,8 @@
         });
       }
 
-      abxRoutes = {};
       if ((state.routes || '').length > 0) {
+        abxRoutes = {};
         (state.routes || '').split(',').map(function(name) {
           abxRoutes[name] = true;
         });
