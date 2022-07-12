@@ -697,10 +697,6 @@
       }
     };
 
-    $(window).on('resize', function() {
-      updateLayout();
-    });
-
     $(function() {
 
       var showBug = function(value) {
@@ -868,6 +864,11 @@
         selectedAbx = nonPinnedAbx[0].abx.name; 
         refresh();
       }
+
+      $(window).on('resize', function() {
+        updateLayout();
+      });
+
     });
   </script>
 </body>
