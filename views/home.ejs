@@ -180,6 +180,9 @@
         (state.bugs || '').split(',').map(function(bugHash) {
           var splitBug = bugHash.split(':');
           targetBugs[splitBug[0]] = splitBug[1] == null ? 1 : parseFloat(splitBug[1]);
+          bugPaths[splitBug[0]].slice(1).map(function(parent) {
+            openBugGroups[parent] = true;
+          });
         });
       }
 
