@@ -16,8 +16,7 @@ var abxList = [
       "Gram Negative Rods": 0.55,
       "Clostridium Perfringens": 1,
       "Clostridium (Not Perfringens)": 0.91,
-      "Gram Positive Rods": 0.93,
-      "Gram Positive Cocci": 1
+      "Gram Positive Rods": 0.93
     },
     cost: '$',
     "contra": [
@@ -291,7 +290,7 @@ var abxList = [
   {
     "name": "Ampicillin/Sulbactam (Unasyn)",
     "admin": "IV",
-    cost: '$',
+    "cost": '$',
     "coverage": {
       "Klebsiella Oxytoca": 0.71,
       "MSSA": 1,
@@ -315,8 +314,7 @@ var abxList = [
       "Bacteroides (not Fragilis)": 0.69,
       "Gram Negative Rods": 1,
       "Clostridium Perfringens": 1,
-      "Clostridium (Not Perfringens)": 0.94,
-      "Gram Positive Cocci": 1
+      "Clostridium (Not Perfringens)": 0.94
     }
   },
   {
@@ -328,6 +326,7 @@ var abxList = [
       "Klebsiella Pneumoniae": 0.92,
       "Klebsiella Aerogenes": 0.77,
       "Enterobacter Cloacae": 0.81,
+      "Enterococcus Faecalis": 0.84, // Not seen on antibiogram
       "MSSA": 1,
       "Streptococcus": 1,
       "Gram Negative Bacilli": 1,
@@ -439,8 +438,7 @@ var abxList = [
       "Bacteroides (not Fragilis)": 0.97,
       "Gram Negative Rods": 1,
       "Clostridium Perfringens": 1,
-      "Clostridium (Not Perfringens)": 1,
-      "Gram Positive Cocci": 1
+      "Clostridium (Not Perfringens)": 1
     }
   },
   {
@@ -554,8 +552,6 @@ var abxList = [
       "Morganella": 0.78,
       "Proteus Mirabilis": 0.86,
       "Proteus Vulgaris": 1,
-      "Staph Aureus": 0.96,
-      "MRSA": 0.93,
       "MSSA": 0.97,
       "Staphylococcus Lugdunensis": 0.98,
       "Staphylococcus Epidermidis": 0.8
@@ -815,7 +811,7 @@ var abxList = [
     }
   },
   {
-    "name": "Caspofungin",
+    "name": "Micafungin", // Was Caspofungin
     "admin": "IV",
     cost: '$$$$',
     "coverage": {
@@ -910,7 +906,7 @@ var abxList = [
     cost: '$',
     "coverage": {
       "Gram Positive Rods": 0.67,
-      "Gram Positive Cocci": 0.84,
+      // "Gram Positive Cocci": 0.84,
       "Bacteroides": 1,
       "Bacteroides Fragilis": 1,
       "Bacteroides (not Fragilis)": 0.97,

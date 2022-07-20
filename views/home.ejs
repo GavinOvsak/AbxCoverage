@@ -42,6 +42,12 @@
       text-align: center;
       cursor: pointer;
     }
+    .abxHeader {
+      overflow-x: scroll;
+      display: inline-block;
+      white-space: nowrap;
+      width: calc(100% - 10px);
+    }
   </style>
 </head>
 <body style="user-select: none;">
@@ -49,7 +55,7 @@
     <span id="titleAndButtons" style="padding-left: 10px;display: inline-block;width: 100%;padding-top: 7px;vertical-align: top;background-color: #0c7bff;color: white;padding-bottom: 5px;">
       <h3 style="display: inline-block;line-height: 35px;position: relative;top: -4px;vertical-align: top;margin-top: 3px;margin-bottom: 0px;margin-right: 10px;" aria-haspopup="true" aria-expanded="true">
         <span id="mainTitle" style="vertical-align: text-top;">
-          <a href="/" style="color: white; text-decoration: none;">Antibiotic Coverage</a>
+          <a href="/" style="color: white; text-decoration: none;">Antimicrobial Coverage</a>
         </span>
       </h3>
       <a href="mailto:ovsak.gavin@gmail.com"><div class="btn btn-light" style="float: right; margin-right: 5px;">Feedback</div></a>
@@ -541,6 +547,11 @@
       abxResults = _.orderBy(abxResults, [function(data) {
         return !!pinnedAbx[data.abx.name] ? -1 : 0;
       }, function(data) {
+        var coverageNum = targetBugList.filter(function(bugItem) {
+          return data.generalCoverage[bugItem.name] != null && data.generalCoverage[bugItem.name] > 0;
+        }).length;
+        return -coverageNum;
+      }, function(data) {
         // Sort by the weighted added benefit to the targetBugs
         return specificCoverageScore(data, targetBugList, pinnedAbx[data.abx.name] == null);
         
@@ -551,8 +562,21 @@
         return _.sum(_.values(data.generalCoverage));
       }]);
 
+      var prevNum = null;
       abxResults.map(function(data) {
         // background-color: #0c7bff; color: white;
+        if (pinnedAbx[data.abx.name] == null) {
+          var coverageBugs = targetBugList.filter(function(bugItem) {
+            return data.generalCoverage[bugItem.name] != null && data.generalCoverage[bugItem.name] > 0;
+          });
+          if (prevNum != coverageBugs.length) {
+            $('#abxList').append($('<h6 class="abxHeader">Coverage: '+coverageBugs.length+'/'+targetBugList.length+' - '+(coverageBugs.map(function(bugItem) {
+              return bugItem.name;
+            }).join(', '))+'</h6>'));
+            prevNum = coverageBugs.length;
+          }
+        }
+
         $('#abxList').append($('<div data-name="'+data.abx.name+'" class="abxRow" style="'+(selectedAbx == data.abx.name ? 'background-color: #75a3ff;' : !!pinnedAbx[data.abx.name] ? 'background-color: #65d165' : '')+'">'+
           data.abx.name+(data.abx.cost != null ? ' ('+data.abx.cost+')' : '')+
           '<i class="'+(!!pinnedAbx[data.abx.name] ? 'fas' : 'far')+' fa-bookmark saveAbx" aria-hidden="true" style="float: right;padding: 5px; color: black"></i>'+
