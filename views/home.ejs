@@ -577,9 +577,7 @@
             return data.generalCoverage[bugItem.name] != null && data.generalCoverage[bugItem.name] > 0;
           });
           if (prevNum != coverageBugs.length && coverageBugs.length > 0) {
-            $('#abxList').append($('<h6 class="abxHeader">'+(empty(pinnedAbx) ? '' : 'Add ')+'Coverage: '+coverageBugs.length+'/'+nonCoveredBugs.length+' - '+(coverageBugs.map(function(bugItem) {
-              return bugItem.name;
-            }).join(', '))+'</h6>'));
+            $('#abxList').append($('<h6 class="abxHeader">'+(empty(pinnedAbx) ? '' : 'Add ')+'Coverage: '+coverageBugs.length+'/'+nonCoveredBugs.length+'</h6>'));
             prevNum = coverageBugs.length;
           }
         }
