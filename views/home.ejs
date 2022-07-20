@@ -235,6 +235,7 @@
       shownBugs = {};
       addToBugList(bugList, bugItemList, [], true);
       for (var key in targetBugs) if (shownBugs[key] == null) delete targetBugs[key];
+      for (var abxName in pinnedAbx) if (abxJumps[abxName] == null) delete pinnedAbx[abxName];
 
       var anySelected = !isEmpty(targetBugs);
 
@@ -548,6 +549,7 @@
         return !!pinnedAbx[data.abx.name] ? -1 : 0;
       }, function(data) {
         var coverageNum = targetBugList.filter(function(bugItem) {
+          if (currentCoverage[bugItem.name] != null && currentCoverage[bugItem.name] > 0) return false;
           return data.generalCoverage[bugItem.name] != null && data.generalCoverage[bugItem.name] > 0;
         }).length;
         return -coverageNum;
@@ -566,11 +568,16 @@
       abxResults.map(function(data) {
         // background-color: #0c7bff; color: white;
         if (pinnedAbx[data.abx.name] == null) {
+          var nonCoveredBugs = targetBugList.filter(function(bugItem) {
+            if (currentCoverage[bugItem.name] != null && currentCoverage[bugItem.name] > 0) return false;
+            return true;
+          });
           var coverageBugs = targetBugList.filter(function(bugItem) {
+            if (currentCoverage[bugItem.name] != null && currentCoverage[bugItem.name] > 0) return false;
             return data.generalCoverage[bugItem.name] != null && data.generalCoverage[bugItem.name] > 0;
           });
-          if (prevNum != coverageBugs.length) {
-            $('#abxList').append($('<h6 class="abxHeader">Coverage: '+coverageBugs.length+'/'+targetBugList.length+' - '+(coverageBugs.map(function(bugItem) {
+          if (prevNum != coverageBugs.length && coverageBugs.length > 0) {
+            $('#abxList').append($('<h6 class="abxHeader">'+(empty(pinnedAbx) ? '' : 'Add ')+'Coverage: '+coverageBugs.length+'/'+nonCoveredBugs.length+' - '+(coverageBugs.map(function(bugItem) {
               return bugItem.name;
             }).join(', '))+'</h6>'));
             prevNum = coverageBugs.length;
