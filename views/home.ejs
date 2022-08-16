@@ -53,12 +53,19 @@
 <body style="user-select: none;">
   <div id="topBar" style="width: 100%; display: inline-block;">
     <span id="titleAndButtons" style="padding-left: 10px;display: inline-block;width: 100%;padding-top: 7px;vertical-align: top;background-color: #0c7bff;color: white;padding-bottom: 5px;">
-      <h3 style="display: inline-block;line-height: 35px;position: relative;top: -4px;vertical-align: top;margin-top: 3px;margin-bottom: 0px;margin-right: 10px;" aria-haspopup="true" aria-expanded="true">
+      <h3 style="display: inline-block;line-height: 35px;position: relative;top: -4px;vertical-align: top;margin-top: 3px;margin-bottom: 5px;margin-right: 10px;" aria-haspopup="true" aria-expanded="true">
         <span id="mainTitle" style="vertical-align: text-top;">
           <a href="/" style="color: white; text-decoration: none;">Antimicrobial Coverage</a>
         </span>
       </h3>
-      <a href="mailto:ovsak.gavin@gmail.com"><div class="btn btn-light" style="float: right; margin-right: 5px;">Feedback</div></a>
+      <a href="mailto:ovsak.gavin@gmail.com"><div class="btn btn-light" style="float: right;margin-right: 5px;margin-bottom: 5px;">Feedback</div></a>
+      <span style="float: right;">
+        <h5 style="display: inline-block;margin-right: 10px;">Antibiogram: </h5>
+        <select id="antibiogram" class="form-control" style="width: auto; display: inline-block; margin-right: 10px;">
+          <option value="BWH">BWH</option>
+          <option value="General">General</option>
+        </select>
+      </span>
       <span id="loadingTitle" style="margin-left: 10px; position: relative; top: -3px; display: none;"> Loading.. </span>
     </span>
   </div>
@@ -145,6 +152,8 @@
     var contraBox = null;
     // var mixedBox = null;
 
+    var antibiogram = 'General';
+
     var getProp = function(that, prop) {
       return $(that).closest('[data-'+prop+']').attr('data-'+prop);
     };
@@ -160,6 +169,16 @@
     var bugPaths = {};
     var abxJumps = {};
     var shownBugs = {};
+
+    var resetData = function() {
+      var bugSearchList = [];
+      addToBugList(bugList, bugSearchList, [], true);
+      bugBox.list = bugSearchList.concat(conditionList);;
+
+      abxList[antibiogram].map(function(abxObj) {
+        abxJumps[abxObj.name] = abxObj;
+      });
+    };
 
     var addToBugList = function(list, outlist, stack, shown) {
       for (var key in list) {
@@ -231,6 +250,19 @@
     };
 
     var refresh = function() {
+
+      $('#antibiogram').empty();
+      for (var key in abxList) {
+        $('#antibiogram').append($('<option value="'+key+'">'+key+'</option>'));
+      }
+      $('#antibiogram').val(antibiogram);
+      $('#antibiogram').unbind('change').on('change', function() {
+        antibiogram = $(this).val();
+        resetData();
+        refresh();
+      });
+
+      resetData();
       var bugItemList = [];
       shownBugs = {};
       addToBugList(bugList, bugItemList, [], true);
@@ -373,7 +405,7 @@
 
 
 
-      var allAbxResults = abxList.map(function(abx) {
+      var allAbxResults = abxList[antibiogram].map(function(abx) {
         if (selectedContraList.some(function(contraName) {
           return (abx.contra || []).indexOf(contraName) >= 0;
         })) return { coverage: [] }; // Avoid contra
@@ -622,7 +654,7 @@
       });
 
       var contraList = {};
-      abxList.map(function(abx) {
+      abxList[antibiogram].map(function(abx) {
         (abx.contra || []).map(function(contra) {
           contraList[contra] = true;
         });
@@ -707,7 +739,7 @@
       // }
 
       if (abxBox != null) {
-        abxBox.list = abxList.filter(function(abx) {
+        abxBox.list = abxList[antibiogram].filter(function(abx) {
           return abx.admin.split(',').some(function(route) {
             return !!abxRoutes[route];
           });
@@ -780,9 +812,11 @@
         showBug(value);
       });
 
-      var bugSearchList = [];
-      addToBugList(bugList, bugSearchList, [], true);
-      bugBox.list = bugSearchList.concat(conditionList);;
+      resetData();
+
+      // var bugSearchList = [];
+      // addToBugList(bugList, bugSearchList, [], true);
+      // bugBox.list = bugSearchList.concat(conditionList);;
 
       $('#abxSearch').unbind('focus').on('focus', function() {
         focusPane = 'abx';
@@ -809,9 +843,9 @@
         refresh();
       });
 
-      abxList.map(function(abxObj) {
-        abxJumps[abxObj.name] = abxObj;
-      });
+      // abxList[antibiogram].map(function(abxObj) {
+      //   abxJumps[abxObj.name] = abxObj;
+      // });
 
       contraBox = new Awesomplete($('#contraSearch')[0], {
         list: [], minChars: 0, autoFirst: true, maxItems: 8,

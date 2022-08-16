@@ -6,7 +6,10 @@ var bugList = {
         'MSSA': true
       },
       'Staphylococcus Lugdunensis': true,
-      'Staphylococcus Epidermidis': true
+      'Staphylococcus Epidermidis': {
+        'MRSE': true,
+        'MSSE': true
+      }
     },
     'Streptococcus': {
       'Streptococcus Agalactiae (Group B)': true,
@@ -88,6 +91,7 @@ var bugList = {
     'Candida': {
       'Candida Albicans': true,
       'Candida Glabrata': true,
+      'Candida Krusel': true,
       'Candida Parapsilosis': true,
       'Candida Tropicalis': true
     }
