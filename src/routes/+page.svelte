@@ -445,11 +445,6 @@
     text-align: center;
     cursor: pointer;
   }
-  .abxHeader {
-    display: inline-block;
-    white-space: nowrap;
-    width: calc(100% - 10px);
-  }
 </style>
 
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} on:keydown={(e) => {
