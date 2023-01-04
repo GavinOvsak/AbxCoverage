@@ -6,6 +6,7 @@
   import _ from 'lodash'
   import { Button, Modal } from 'sveltestrap'
   import Select from 'svelte-select';
+  import { base } from "$app/paths";
 
   let isModalOpen = false;
   let contraSelected = '';
@@ -474,7 +475,7 @@
       aria-haspopup="true"
       aria-expanded="true">
       <span id="mainTitle" style="vertical-align: text-top;">
-        <a href="/" style="color: white; text-decoration: none;">Antimicrobial Coverage!</a>
+        <a href="{base}/" style="color: white; text-decoration: none;">Antimicrobial Coverage!</a>
       </span>
     </h3>
     <a href="mailto:ovsak.gavin@gmail.com">
